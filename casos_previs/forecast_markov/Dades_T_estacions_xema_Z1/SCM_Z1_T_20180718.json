@@ -1,0 +1,300 @@
+[
+    {
+        "codi": "Z1",
+        "variables": [
+            {
+                "codi": 32,
+                "lectures": [
+                    {
+                        "data": "2018-07-18T00:00Z",
+                        "valor": 9.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T00:30Z",
+                        "valor": 9.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T01:00Z",
+                        "valor": 9.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T01:30Z",
+                        "valor": 9.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T02:00Z",
+                        "valor": 9.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T02:30Z",
+                        "valor": 9.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T03:00Z",
+                        "valor": 9.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T03:30Z",
+                        "valor": 9.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T04:00Z",
+                        "valor": 9.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T04:30Z",
+                        "valor": 9.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T05:00Z",
+                        "valor": 9.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T05:30Z",
+                        "valor": 10.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T06:00Z",
+                        "valor": 12.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T06:30Z",
+                        "valor": 12.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T07:00Z",
+                        "valor": 12.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T07:30Z",
+                        "valor": 13.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T08:00Z",
+                        "valor": 14.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T08:30Z",
+                        "valor": 15.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T09:00Z",
+                        "valor": 15.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T09:30Z",
+                        "valor": 15.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T10:00Z",
+                        "valor": 14.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T10:30Z",
+                        "valor": 14.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T11:00Z",
+                        "valor": 15.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T11:30Z",
+                        "valor": 16.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T12:00Z",
+                        "valor": 16.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T12:30Z",
+                        "valor": 17.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T13:00Z",
+                        "valor": 16.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T13:30Z",
+                        "valor": 16.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T14:00Z",
+                        "valor": 15.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T14:30Z",
+                        "valor": 15.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T15:00Z",
+                        "valor": 15.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T15:30Z",
+                        "valor": 15.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T16:00Z",
+                        "valor": 14.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T16:30Z",
+                        "valor": 15.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T17:00Z",
+                        "valor": 13.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T17:30Z",
+                        "valor": 11.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T18:00Z",
+                        "valor": 11.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T18:30Z",
+                        "valor": 10.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T19:00Z",
+                        "valor": 9.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T19:30Z",
+                        "valor": 9.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T20:00Z",
+                        "valor": 9.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T20:30Z",
+                        "valor": 9.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T21:00Z",
+                        "valor": 8.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T21:30Z",
+                        "valor": 9.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T22:00Z",
+                        "valor": 10.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T22:30Z",
+                        "valor": 11.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T23:00Z",
+                        "valor": 10.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2018-07-18T23:30Z",
+                        "valor": 10.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    }
+                ]
+            }
+        ]
+    }
+]

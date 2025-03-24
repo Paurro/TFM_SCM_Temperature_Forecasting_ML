@@ -1,0 +1,90 @@
+[
+    {
+        "codi": "Z1",
+        "variables": [
+            {
+                "codi": 32,
+                "lectures": [
+                    {
+                        "data": "1998-09-10T06:00Z",
+                        "valor": 13.5,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T07:00Z",
+                        "valor": 14.3,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T08:00Z",
+                        "valor": 14.8,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T09:00Z",
+                        "valor": 15.3,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T10:00Z",
+                        "valor": 15.7,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T11:00Z",
+                        "valor": 15.7,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T12:00Z",
+                        "valor": 15.6,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T13:00Z",
+                        "valor": 15.6,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T14:00Z",
+                        "valor": 15.6,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T15:00Z",
+                        "valor": 12.7,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T16:00Z",
+                        "valor": 12.3,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T17:00Z",
+                        "valor": 8.9,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1998-09-10T18:00Z",
+                        "valor": 7.8,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    }
+                ]
+            }
+        ]
+    }
+]

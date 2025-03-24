@@ -1,0 +1,66 @@
+[
+    {
+        "codi": "Z1",
+        "variables": [
+            {
+                "codi": 32,
+                "lectures": [
+                    {
+                        "data": "2000-08-03T00:00Z",
+                        "valor": 13.0,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2000-08-03T01:00Z",
+                        "valor": 10.3,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2000-08-03T02:00Z",
+                        "valor": 10.3,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2000-08-03T03:00Z",
+                        "valor": 11.9,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2000-08-03T04:00Z",
+                        "valor": 10.0,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2000-08-03T05:00Z",
+                        "valor": 7.3,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2000-08-03T06:00Z",
+                        "valor": 7.4,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2000-08-03T07:00Z",
+                        "valor": 7.4,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2000-08-03T08:00Z",
+                        "valor": 6.7,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    }
+                ]
+            }
+        ]
+    }
+]

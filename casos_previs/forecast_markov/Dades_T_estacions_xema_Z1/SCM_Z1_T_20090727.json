@@ -1,0 +1,300 @@
+[
+    {
+        "codi": "Z1",
+        "variables": [
+            {
+                "codi": 32,
+                "lectures": [
+                    {
+                        "data": "2009-07-27T00:00Z",
+                        "valor": 18.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T00:30Z",
+                        "valor": 18.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T01:00Z",
+                        "valor": 17.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T01:30Z",
+                        "valor": 16.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T02:00Z",
+                        "valor": 16.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T02:30Z",
+                        "valor": 16.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T03:00Z",
+                        "valor": 16.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T03:30Z",
+                        "valor": 15.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T04:00Z",
+                        "valor": 15.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T04:30Z",
+                        "valor": 16.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T05:00Z",
+                        "valor": 15.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T05:30Z",
+                        "valor": 15.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T06:00Z",
+                        "valor": 16.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T06:30Z",
+                        "valor": 17.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T07:00Z",
+                        "valor": 18.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T07:30Z",
+                        "valor": 18.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T08:00Z",
+                        "valor": 18.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T08:30Z",
+                        "valor": 18.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T09:00Z",
+                        "valor": 19.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T09:30Z",
+                        "valor": 19.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T10:00Z",
+                        "valor": 19.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T10:30Z",
+                        "valor": 19.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T11:00Z",
+                        "valor": 19.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T11:30Z",
+                        "valor": 18.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T12:00Z",
+                        "valor": 19.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T12:30Z",
+                        "valor": 19.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T13:00Z",
+                        "valor": 18.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T13:30Z",
+                        "valor": 17.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T14:00Z",
+                        "valor": 16.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T14:30Z",
+                        "valor": 12.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T15:00Z",
+                        "valor": 10.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T15:30Z",
+                        "valor": 9.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T16:00Z",
+                        "valor": 9.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T16:30Z",
+                        "valor": 8.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T17:00Z",
+                        "valor": 8.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T17:30Z",
+                        "valor": 8.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T18:00Z",
+                        "valor": 7.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T18:30Z",
+                        "valor": 7.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T19:00Z",
+                        "valor": 7.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T19:30Z",
+                        "valor": 7.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T20:00Z",
+                        "valor": 7.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T20:30Z",
+                        "valor": 7.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T21:00Z",
+                        "valor": 9.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T21:30Z",
+                        "valor": 9.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T22:00Z",
+                        "valor": 9.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T22:30Z",
+                        "valor": 7.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T23:00Z",
+                        "valor": 6.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2009-07-27T23:30Z",
+                        "valor": 11.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    }
+                ]
+            }
+        ]
+    }
+]

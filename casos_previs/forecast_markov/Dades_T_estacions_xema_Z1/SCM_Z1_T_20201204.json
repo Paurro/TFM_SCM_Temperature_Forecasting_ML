@@ -1,0 +1,300 @@
+[
+    {
+        "codi": "Z1",
+        "variables": [
+            {
+                "codi": 32,
+                "lectures": [
+                    {
+                        "data": "2020-12-04T00:00Z",
+                        "valor": -3.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T00:30Z",
+                        "valor": -3.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T01:00Z",
+                        "valor": -3.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T01:30Z",
+                        "valor": -4.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T02:00Z",
+                        "valor": -5.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T02:30Z",
+                        "valor": -5.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T03:00Z",
+                        "valor": -5.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T03:30Z",
+                        "valor": -5.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T04:00Z",
+                        "valor": -5.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T04:30Z",
+                        "valor": -5.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T05:00Z",
+                        "valor": -5.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T05:30Z",
+                        "valor": -6.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T06:00Z",
+                        "valor": -6.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T06:30Z",
+                        "valor": -6.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T07:00Z",
+                        "valor": -6.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T07:30Z",
+                        "valor": -6.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T08:00Z",
+                        "valor": -6.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T08:30Z",
+                        "valor": -6.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T09:00Z",
+                        "valor": -6.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T09:30Z",
+                        "valor": -6.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T10:00Z",
+                        "valor": -6.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T10:30Z",
+                        "valor": -6.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T11:00Z",
+                        "valor": -6.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T11:30Z",
+                        "valor": -6.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T12:00Z",
+                        "valor": -7.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T12:30Z",
+                        "valor": -6.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T13:00Z",
+                        "valor": -6.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T13:30Z",
+                        "valor": -7.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T14:00Z",
+                        "valor": -6.8,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T14:30Z",
+                        "valor": -7.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T15:00Z",
+                        "valor": -7.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T15:30Z",
+                        "valor": -7.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T16:00Z",
+                        "valor": -8.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T16:30Z",
+                        "valor": -8.2,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T17:00Z",
+                        "valor": -8.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T17:30Z",
+                        "valor": -9.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T18:00Z",
+                        "valor": -8.7,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T18:30Z",
+                        "valor": -9.1,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T19:00Z",
+                        "valor": -9.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T19:30Z",
+                        "valor": -9.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T20:00Z",
+                        "valor": -8.9,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T20:30Z",
+                        "valor": -9.0,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T21:00Z",
+                        "valor": -9.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T21:30Z",
+                        "valor": -9.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T22:00Z",
+                        "valor": -9.6,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T22:30Z",
+                        "valor": -10.5,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T23:00Z",
+                        "valor": -10.4,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    },
+                    {
+                        "data": "2020-12-04T23:30Z",
+                        "valor": -10.3,
+                        "estat": "V",
+                        "baseHoraria": "SH"
+                    }
+                ]
+            }
+        ]
+    }
+]

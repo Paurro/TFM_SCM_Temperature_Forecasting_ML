@@ -1,0 +1,48 @@
+[
+    {
+        "codi": "Z1",
+        "variables": [
+            {
+                "codi": 32,
+                "lectures": [
+                    {
+                        "data": "2001-06-14T00:00Z",
+                        "valor": 7.6,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2001-06-14T01:00Z",
+                        "valor": 8.6,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2001-06-14T02:00Z",
+                        "valor": 9.0,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2001-06-14T03:00Z",
+                        "valor": 9.0,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2001-06-14T04:00Z",
+                        "valor": 9.2,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2001-06-14T05:00Z",
+                        "valor": 9.0,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    }
+                ]
+            }
+        ]
+    }
+]

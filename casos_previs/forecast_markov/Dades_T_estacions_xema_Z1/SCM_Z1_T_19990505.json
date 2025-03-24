@@ -1,0 +1,78 @@
+[
+    {
+        "codi": "Z1",
+        "variables": [
+            {
+                "codi": 32,
+                "lectures": [
+                    {
+                        "data": "1999-05-05T00:00Z",
+                        "valor": 2.7,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1999-05-05T01:00Z",
+                        "valor": 2.7,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1999-05-05T02:00Z",
+                        "valor": 2.7,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1999-05-05T03:00Z",
+                        "valor": 2.6,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1999-05-05T04:00Z",
+                        "valor": 2.3,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1999-05-05T05:00Z",
+                        "valor": 2.9,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1999-05-05T06:00Z",
+                        "valor": 3.6,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1999-05-05T07:00Z",
+                        "valor": 4.8,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1999-05-05T08:00Z",
+                        "valor": 7.2,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1999-05-05T09:00Z",
+                        "valor": 6.3,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "1999-05-05T10:00Z",
+                        "valor": 6.9,
+                        "estat": "T",
+                        "baseHoraria": "HO"
+                    }
+                ]
+            }
+        ]
+    }
+]

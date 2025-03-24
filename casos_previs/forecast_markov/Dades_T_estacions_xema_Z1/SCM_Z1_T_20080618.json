@@ -1,0 +1,60 @@
+[
+    {
+        "codi": "Z1",
+        "variables": [
+            {
+                "codi": 32,
+                "lectures": [
+                    {
+                        "data": "2008-06-18T00:00Z",
+                        "valor": 2.0,
+                        "estat": "V",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2008-06-18T01:00Z",
+                        "valor": 2.7,
+                        "estat": "V",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2008-06-18T02:00Z",
+                        "valor": 3.6,
+                        "estat": "V",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2008-06-18T03:00Z",
+                        "valor": 3.9,
+                        "estat": "V",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2008-06-18T04:00Z",
+                        "valor": 4.3,
+                        "estat": "V",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2008-06-18T05:00Z",
+                        "valor": 5.1,
+                        "estat": "V",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2008-06-18T06:00Z",
+                        "valor": 6.8,
+                        "estat": "V",
+                        "baseHoraria": "HO"
+                    },
+                    {
+                        "data": "2008-06-18T07:00Z",
+                        "valor": 8.7,
+                        "estat": "V",
+                        "baseHoraria": "HO"
+                    }
+                ]
+            }
+        ]
+    }
+]
