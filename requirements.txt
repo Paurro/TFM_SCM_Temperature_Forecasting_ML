@@ -19,10 +19,12 @@ idna==3.10
 ipykernel==6.29.5
 ipython==9.0.2
 ipython_pygments_lexers==1.1.1
+ipywidgets==8.1.5
 jedi==0.19.2
 joblib==1.4.2
 jupyter_client==8.6.3
 jupyter_core==5.7.2
+jupyterlab_widgets==3.0.13
 kiwisolver==1.4.8
 llvmlite==0.44.0
 matplotlib==3.10.1
@@ -64,3 +66,4 @@ tzdata==2025.2
 urllib3==2.3.0
 utilsforecast==0.2.12
 wcwidth==0.2.13
+widgetsnbextension==4.0.13
