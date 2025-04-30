@@ -1,6 +1,5 @@
 name: TFM_venv
 channels:
-  - conda-forge
   - https://repo.anaconda.com/pkgs/main
   - https://repo.anaconda.com/pkgs/r
 dependencies:
@@ -14,4 +13,6 @@ dependencies:
   - requests
   - plotly
   - nbformat
+  - pmdarima
+  - numpy
 prefix: /home/prp/miniconda3/envs/TFM_venv
