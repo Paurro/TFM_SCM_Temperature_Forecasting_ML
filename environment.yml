@@ -15,4 +15,5 @@ dependencies:
   - nbformat
   - pmdarima
   - numpy
+  - statsforecast
 prefix: /home/prp/miniconda3/envs/TFM_venv
