@@ -1,19 +1,18 @@
-name: TFM_venv
+name: base
 channels:
   - https://repo.anaconda.com/pkgs/main
   - https://repo.anaconda.com/pkgs/r
 dependencies:
   - python=3.12
-  - ipykernel
+  - conda==25.3.1
+  - setuptools
+  - pip
+  - wheel
+  - conda-anaconda-telemetry
+  - conda-anaconda-tos[version='>=0.1.2']
+  - conda-content-trust
+  - conda-libmamba-solver
+  - menuinst
+  - anaconda-anon-usage
   - pandas
-  - matplotlib
-  - seaborn
-  - scikit-learn
-  - statsmodels
-  - requests
-  - plotly
-  - nbformat
-  - pmdarima
-  - numpy
-  - statsforecast
-prefix: /home/prp/miniconda3/envs/TFM_venv
+prefix: /home/prp/miniconda3
