@@ -19,24 +19,48 @@
 #
 #
 # Ús recomanat:
-# from lstm_functions import create_sequences, build_model_lstm, ...
+# from lstm_functions import*
 # ===============================================================
 
+# ============================
+# Llibreries estàndard
+# ============================
+import os
+import random
 
-# Imports necessàries
+# ============================
+# Llibreries científiques
+# ============================
 import numpy as np
 import pandas as pd
+
+# ============================
+# Visualització
+# ============================
+import matplotlib.pyplot as plt
+import matplotlib.dates as mdates
+from matplotlib.ticker import FuncFormatter, MaxNLocator
+
+# ============================
+# Machine Learning
+# ============================
 from sklearn.preprocessing import MinMaxScaler
+from sklearn.metrics import mean_squared_error, mean_absolute_error
+
+# ============================
+# TensorFlow / Keras
+# ============================
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import LSTM, Dense, Dropout
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.callbacks import EarlyStopping, ModelCheckpoint
-from matplotlib.ticker import FuncFormatter     
-import random as random
-import os
-import matplotlib.pyplot as plt
-from matplotlib.ticker import FuncFormatter, MaxNLocator
+
+# ============================
+# Altres (només si uses display() dins funcions)
+# ============================
+from IPython.display import display
+
 
 
 
@@ -303,8 +327,9 @@ def plot_loss_train_val(history):
 
 
 
+
 # ================================================================
-# Funcions per la predicció amb el model LSTM
+# Funcions de predicció LSTM 1 output
 # ================================================================
 
 def prediccio_batch(model, X_test, df_test_pred, scaler, nom_columna='pred_batch'):
@@ -336,7 +361,7 @@ def prediccio_batch(model, X_test, df_test_pred, scaler, nom_columna='pred_batch
 
 
 
-def prediccio_multi_step_iterativa(model, X_test, df_test_pred, scaler, nom_columna='pred_iter'):
+def prediccio_step_iterativa(model, X_test, df_test_pred, scaler, nom_columna='pred_iter'):
     """
     Fa una predicció multi-step iterativa, reinjectant cada predicció com a nou input,
     i afegeix les prediccions desescalades directament a df_test_pred.
@@ -427,3 +452,295 @@ def prediccio_iterativa_reinjection(model, X_test, df_test_pred, scaler, reinjec
     df_test_pred.loc[idx_valid, nom_columna] = y_pred_rescaled
 
     return df_test_pred
+
+
+
+
+# ================================================================
+# Funcions de predicció LSTM multi-output
+# ================================================================
+
+
+# Funció per fer prediccions multi-step
+
+def prediccio_batch_multi(model, X_test, df_test, scaler, window_size, n_outputs, nom_columna='pred_batch'):
+
+    """
+    Fa prediccions multi-output de manera contínua i enganxa totes les prediccions al DataFrame original.
+
+    Supòsits:
+    - S'utilitzen seqüències creades amb `n_slide = n_outputs`, per tant NO hi ha solapament entre finestres.
+    - Cada finestra prediu exactament els següents `n_outputs` valors, i la següent finestra continua on acaba l’anterior.
+
+    Args:
+        model: Model LSTM multi-output entrenat.
+        X_test (np.array): Matriu d’entrada per a test (n_samples, window_size, 1).
+        df_test (pd.DataFrame): DataFrame original amb les dades reals, conté almenys la columna 'valor'.
+        scaler: MinMaxScaler utilitzat per escalar i desescalar les dades.
+        window_size (int): Mida de la finestra d’entrada per a cada seqüència.
+        n_outputs (int): Nombre de passos que prediu el model (outputs per finestra).
+        nom_columna (str): Nom de la columna on es guardaran les prediccions desescalades.
+
+    Retorna:
+        df_test amb la nova columna `nom_columna` que conté les prediccions (amb NaNs on no es pot predir).
+    """
+    # 1. Fer la predicció batch
+    y_pred = model.predict(X_test, verbose=0)
+
+    # 2. Desescalar les prediccions (per tornar a °C)
+    y_pred_rescaled = scaler.inverse_transform(y_pred)
+
+    # 3. Inicialitzem la nova columna amb NaNs
+    df_test[nom_columna] = np.nan
+
+    # 4. Omplim la columna amb les prediccions multi-output (una fila per cada pas predit)
+    for i in range(len(y_pred_rescaled)):
+        for j in range(n_outputs):
+            idx = window_size + i * n_outputs + j  # índex corresponent a la predicció j de la i-èsima seqüència
+            if idx < len(df_test):
+                df_test.at[idx, nom_columna] = y_pred_rescaled[i, j]
+
+    return df_test
+
+
+
+
+def prediccio_step_iterativa_multi(model, X_test, df_test_pred, scaler, nom_columna='pred_iter'):
+    """
+    Fa una predicció multi-step iterativa (multi-output), reinjectant les prediccions com a nova entrada,
+    i afegeix les prediccions desescalades directament a df_test_pred.
+
+    Assumim que el model prediu diversos passos (multi-output), i que X_test conté una sola seqüència inicial.
+
+    Args:
+        model: model LSTM entrenat.
+        X_test (np.array): finestres d’entrada (forma: (n_samples, window_size, 1)).
+        df_test_pred (pd.DataFrame): DataFrame amb la columna 'valor' desescalada. Es modifica in-place.
+        scaler: MinMaxScaler ajustat sobre les dades de train.
+        nom_columna (str): nom de la columna on s’enganxaran les prediccions (per defecte 'pred_iter').
+
+    Returns:
+        df_test_pred (DataFrame): amb la nova columna de predicció iterativa afegida.
+        y_pred_rescaled (np.array): prediccions desescalades (forma: (n_preds_total,)).
+    """
+    window_size = X_test.shape[1]
+    n_outputs = model.output_shape[-1]
+
+    seq = X_test[0].copy()  # Seqüència inicial escalada (window_size, 1)
+    preds_scaled = []
+
+    n_preds_total = len(df_test_pred) - window_size
+    n_steps = n_preds_total // n_outputs
+
+    for _ in range(n_steps):
+        input_seq = seq.reshape((1, window_size, 1))  # Afegim dimensió batch
+        pred_scaled = model.predict(input_seq, verbose=0)[0]  # (n_outputs,)
+        preds_scaled.extend(pred_scaled)
+
+        # Afegim les prediccions escalades al final de la seqüència
+        pred_scaled_reshaped = pred_scaled.reshape(-1, 1)
+        seq = np.concatenate([seq[n_outputs:], pred_scaled_reshaped], axis=0)
+
+    # Desescalar totes les prediccions
+    y_pred_rescaled = scaler.inverse_transform(np.array(preds_scaled).reshape(-1, 1)).flatten()
+
+    # Assignar les prediccions al DataFrame
+    idx_valid = df_test_pred.index[window_size:window_size + len(y_pred_rescaled)]
+    df_test_pred.loc[idx_valid, nom_columna] = y_pred_rescaled
+
+    return df_test_pred
+
+
+
+
+def prediccio_iterativa_reinjection_multi(model, X_test, df_test_pred, scaler, reinjeccio=5, nom_columna='pred_reinject'):
+    """
+    Fa una predicció iterativa multi-output amb reinjecció de valors reals cada 'reinjeccio' passos.
+    Afegeix les prediccions desescalades al df_test_pred.
+
+    Args:
+        model: model LSTM multi-output entrenat.
+        X_test (np.array): finestres d’entrada (forma: (n_samples, window_size, 1)).
+        df_test_pred (pd.DataFrame): DataFrame amb la columna 'valor_scaled'. Es modifica in-place.
+        scaler: MinMaxScaler ajustat sobre les dades de train.
+        reinjeccio (int): cada quants passos es reinjecta el valor real.
+        nom_columna (str): nom de la columna on s’enganxaran les prediccions.
+
+    Returns:
+        df_test_pred (DataFrame): amb la nova columna de prediccions afegida.
+        y_pred_rescaled (np.array): prediccions desescalades (forma: (n_preds_total,)).
+    """
+    window_size = X_test.shape[1]
+    n_outputs = model.output_shape[-1]
+    valors_scaled = df_test_pred['valor_scaled'].values
+    preds_scaled = []
+
+    # Inicialitzem amb la primera finestra real
+    seq = valors_scaled[:window_size].reshape(-1, 1).copy()
+
+    # Nombre total de passos de predicció (amb salt de n_outputs)
+    n_preds_total = len(df_test_pred) - window_size
+    n_steps = n_preds_total // n_outputs
+
+    for i in range(n_steps):
+        input_seq = seq.reshape((1, window_size, 1))
+        pred_scaled = model.predict(input_seq, verbose=0)[0]  # (n_outputs,)
+        preds_scaled.extend(pred_scaled)
+
+        # Reinjecció cada 'reinjeccio' passos
+        if (i + 1) % reinjeccio == 0:
+            start_real = i * n_outputs
+            end_real = start_real + window_size
+            if end_real <= len(valors_scaled):
+                seq = valors_scaled[start_real:end_real].reshape(-1, 1).copy()
+            else:
+                pred_reshaped = pred_scaled.reshape(-1, 1)
+                seq = np.concatenate([seq[n_outputs:], pred_reshaped], axis=0)
+        else:
+            pred_reshaped = pred_scaled.reshape(-1, 1)
+            seq = np.concatenate([seq[n_outputs:], pred_reshaped], axis=0)
+
+    # Desescalar i inserir al DataFrame
+    y_pred_rescaled = scaler.inverse_transform(np.array(preds_scaled).reshape(-1, 1)).flatten()
+    idx_valid = df_test_pred.index[window_size : window_size + len(y_pred_rescaled)]
+    df_test_pred.loc[idx_valid, nom_columna] = y_pred_rescaled
+
+    return df_test_pred
+
+
+
+# ================================================================
+# Funcions de càlcul de mètriques i gràfics
+# ================================================================
+
+
+def calcular_metriques(df_test_pred, col_real='valor', col_preds=['pred_batch', 'pred_iter', 'pred_reinject'],window_size=0):
+    """
+    Calcula RMSE, MSE i MAE per diferents columnes de predicció respecte a una columna real.
+
+    Args:
+        df_test_pred (pd.DataFrame): DataFrame amb les columnes de valors reals i prediccions.
+        col_real (str): Nom de la columna amb els valors reals.
+        col_preds (list): Llista amb noms de les columnes de predicció.
+        window_size (int): Mida de la finestra per alinear les dades.
+
+    Returns:
+        pd.DataFrame: Taula amb RMSE, MSE i MAE per cada mètode de predicció.
+    """
+    metriques = {'Mètrica': ['RMSE', 'MSE', 'MAE']}
+    y_true = df_test_pred[col_real][window_size:]
+
+    for col in col_preds:
+        y_pred = df_test_pred[col][window_size:]
+        rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+        mse = mean_squared_error(y_true, y_pred)
+        mae = mean_absolute_error(y_true, y_pred)
+        metriques[col] = [rmse, mse, mae]
+
+    df_metriques = pd.DataFrame(metriques).set_index('Mètrica').round(4)
+    
+    return df_metriques
+
+
+
+
+def calcular_metriques_multiout(df_test_pred, col_real='valor', col_preds=['pred_batch', 'pred_iter', 'pred_reinject'],window_size=0, n_outputs=1):
+    """
+    Calcula RMSE, MSE i MAE per diferents columnes de predicció respecte a una columna real.
+
+    Args:
+        df_test_pred (pd.DataFrame): DataFrame amb les columnes de valors reals i prediccions.
+        col_real (str): Nom de la columna amb els valors reals.
+        col_preds (list): Llista amb noms de les columnes de predicció.
+        window_size (int): Mida de la finestra per alinear les dades.
+
+    Returns:
+        pd.DataFrame: Taula amb RMSE, MSE i MAE per cada mètode de predicció.
+    """
+    metriques = {'Mètrica': ['RMSE', 'MSE', 'MAE']}
+    y_true = df_test_pred[col_real][window_size:(1-n_outputs)]
+
+    for col in col_preds:
+        y_pred = df_test_pred[col][window_size:(1-n_outputs)]
+        rmse = np.sqrt(mean_squared_error(y_true, y_pred))
+        mse = mean_squared_error(y_true, y_pred)
+        mae = mean_absolute_error(y_true, y_pred)
+        metriques[col] = [rmse, mse, mae]
+
+    df_metriques = pd.DataFrame(metriques).set_index('Mètrica').round(4)
+    
+    return df_metriques
+
+
+
+
+def plot_prediccions_lstm(
+    df_train,
+    df_val,
+    df_test_pred,
+    columnes_prediccio=None,
+    mostrar_train=False,
+    dies_train=0,
+    mostrar_val=False,
+    title='Temperatura real i predicció LSTM',
+    station='Z1 de la Bonaigua'
+):
+    
+    """
+    Ploteja les dades reals i les prediccions d'un model LSTM.
+
+    Args:
+        df_train (pd.DataFrame): DataFrame de train amb columnes ['data', 'valor'].
+        df_val (pd.DataFrame): DataFrame de validació amb ['data', 'valor'].
+        df_test_pred (pd.DataFrame): DataFrame de test amb ['data', 'valor'] i prediccions.
+        columnes_prediccio (list): Columnes de predicció a representar (ex: ['prediccio_batch', 'prediccio_iter']).
+        mostrar_train (bool): Si es vol mostrar part del train.
+        dies_train (int): Dies finals de train a mostrar (si mostrar_train=True).
+        mostrar_val (bool): Si es vol mostrar validació.
+        title (str): Títol del gràfic.
+        station (str): Nom de l'estació per incloure al títol.
+    """
+    plt.figure(figsize=(16, 5))
+
+    if mostrar_train and dies_train > 0:
+        data_limit = df_train['data'].max() - pd.Timedelta(days=dies_train)
+        df_train_filtrat = df_train[df_train['data'] >= data_limit]
+        plt.plot(df_train_filtrat['data'], df_train_filtrat['valor'],
+                 label=f'Train (últims {dies_train} dies)', color='firebrick', linewidth=1.5)
+
+    if mostrar_val:
+        plt.plot(df_val['data'], df_val['valor'],
+                 label='Validació', color='darkgreen', linewidth=1.5)
+
+    # Dades reals de test
+    plt.plot(df_test_pred['data'], df_test_pred['valor'],
+             label='Test', color='steelblue', linewidth=1.5)
+
+    # Prediccions
+    colors = ['darkorange', 'purple', 'green', 'brown', 'teal']
+    linestyles = ['--', '--', '--', '--', '--']
+
+    if columnes_prediccio:
+        for i, col in enumerate(columnes_prediccio):
+            plt.plot(df_test_pred['data'], df_test_pred[col],
+                     label=col.replace('_', ' ').capitalize(),
+                     color=colors[i % len(colors)],
+                     linestyle=linestyles[i % len(linestyles)],
+                     linewidth=1.5)
+
+    # Format general
+    plt.title(f'{title} - Estació {station}', fontsize=17, weight='bold')
+    plt.xlabel('Data', fontsize=14)
+    plt.ylabel('Temperatura (°C)', fontsize=14)
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=12)
+    plt.grid(True, linestyle='--', alpha=0.5, linewidth=0.6)
+    plt.legend(fontsize=12, frameon=False)
+
+    # Format de dates
+    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y %m'))
+    plt.gca().xaxis.set_major_locator(mdates.MonthLocator(interval=1))
+    plt.gcf().autofmt_xdate()
+
+    plt.tight_layout()
+    plt.show()
