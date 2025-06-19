@@ -87,6 +87,86 @@ def escala_mil(x, pos):
     return f'{val:.1f}'
 
 
+# Funció per separar les dades en train, val i test
+
+def split_dades(df_lstm):
+    """
+    Separa un DataFrame de dades temporals en conjunts de train, validació i test,
+    basant-se en dates límit relatives al màxim de la columna 'data'.
+
+    Args:
+        df_lstm (pd.DataFrame): DataFrame amb una columna 'data' i una columna 'valor'.
+        limit_train (int): mesos per definir el límit del conjunt de train.
+        limit_val (int): mesos per definir el límit del conjunt de validació.
+
+    Returns:
+        df_train, df_val, df_test: DataFrames separats per train, validació i test.
+    """
+    
+    # Comprovem que el DataFrame tingui les columnes necessàries
+    if 'data' not in df_lstm.columns or 'valor' not in df_lstm.columns:
+        raise ValueError("El DataFrame ha de tenir les columnes 'data' i 'valor'.")
+
+
+    # Definim les dates límit per la separació
+    data_max = df_lstm['data'].max()
+
+    data_limit_train = data_max - pd.DateOffset(months= 6)  # Límit inicial del train
+    data_limit_val = data_max - pd.DateOffset(months= 3)    # Límit inicial de la validació
+
+    # Separem els datasets
+    df_train = df_lstm[df_lstm['data'] <= data_limit_train].copy().reset_index(drop=True)
+    df_val = df_lstm[(df_lstm['data'] > data_limit_train) & (df_lstm['data'] <= data_limit_val)].copy().reset_index(drop=True)
+    df_test = df_lstm[df_lstm['data'] > data_limit_val].copy().reset_index(drop=True)
+
+    return df_train, df_val, df_test
+
+
+
+# Crea una funció per escalar les dades
+
+def escalar_dades(df_train, df_val, df_test, columna='valor', verbose=True):
+    """
+    Escala els valors d'una columna numèrica utilitzant MinMaxScaler.
+    L'ajust es fa només sobre el conjunt de train, i després s'aplica als altres.
+
+    Parameters:
+    - df_train, df_val, df_test: DataFrames amb la columna a escalar
+    - columna: nom de la columna a escalar (per defecte 'valor')
+
+    Returns:
+    - df_train, df_val, df_test: DataFrames amb una nova columna 'columna_scaled'
+    - scaler: objecte MinMaxScaler ja entrenat
+    """
+    
+    # Importem el Scaler
+    scaler = MinMaxScaler()
+
+    # Escalar només sobre train i transformar val i test
+    df_train[f'{columna}_scaled'] = scaler.fit_transform(df_train[[columna]])
+    df_val[f'{columna}_scaled'] = scaler.transform(df_val[[columna]])
+    df_test[f'{columna}_scaled'] = scaler.transform(df_test[[columna]])
+
+
+    # Observem com queden les dades
+    print('✅ Escalat completat:')
+    print("\n")
+
+    if verbose:
+
+        print('Train dataset shape:', df_train.shape)
+        # display(df_train.head())
+
+        print('Validation dataset shape:', df_val.shape)
+        # display(df_val.head())
+
+        print('Test dataset shape:', df_test.shape)
+        # display(df_test.head())
+
+    return df_train, df_val, df_test, scaler
+
+
+
 
 # Creem una funció per crear sequences per LSTM d'entrada
 
@@ -130,45 +210,6 @@ def create_sequences(series, window_size, n_outputs=1, n_slide=1):
     return X, y
 
 
-def escalar_dades(df_train, df_val, df_test, columna='valor', verbose=True):
-    """
-    Escala els valors d'una columna numèrica utilitzant MinMaxScaler.
-    L'ajust es fa només sobre el conjunt de train, i després s'aplica als altres.
-
-    Parameters:
-    - df_train, df_val, df_test: DataFrames amb la columna a escalar
-    - columna: nom de la columna a escalar (per defecte 'valor')
-
-    Returns:
-    - df_train, df_val, df_test: DataFrames amb una nova columna 'columna_scaled'
-    - scaler: objecte MinMaxScaler ja entrenat
-    """
-    
-    # Importem el Scaler
-    scaler = MinMaxScaler()
-
-    # Escalar només sobre train i transformar val i test
-    df_train[f'{columna}_scaled'] = scaler.fit_transform(df_train[[columna]])
-    df_val[f'{columna}_scaled'] = scaler.transform(df_val[[columna]])
-    df_test[f'{columna}_scaled'] = scaler.transform(df_test[[columna]])
-
-
-    # Observem com queden les dades
-    print('✅ Escalat completat:')
-    print("\n")
-
-    if verbose:
-
-        print('Train dataset shape:', df_train.shape)
-        display(df_train.head())
-
-        print('Validation dataset shape:', df_val.shape)
-        display(df_val.head())
-
-        print('Test dataset shape:', df_test.shape)
-        display(df_test.head())
-
-    return df_train, df_val, df_test, scaler
 
 
 
@@ -181,7 +222,7 @@ def escalar_dades(df_train, df_val, df_test, columna='valor', verbose=True):
 def definir_model_lstm(
     window_size,       # mida de la finestra temporal (timesteps)
     n_features,        # nombre de variables d'entrada (features)
-    n_outputs=1,       # nombre de valors a predir
+    n_outputs,         # nombre de valors a predir
     n_layers=3,        # nombre total de capes LSTM
     n_units=64,        # neurones per cada capa LSTM
     dropout_rate=0.2,  # percentatge de neurones a desactivar (Dropout)
@@ -250,7 +291,7 @@ def train_model(
     patience=5,         # paciència per l'EarlyStopping. Nombre de epoques sense millora abans d'aturar l'entrenament.
     shuffle=False,      # si es vol barrejar les dades (normalment False en seqüències)
     seed=42,            # seed per assegurar la reproduïbilitat
-    summary=False       # si es vol mostrar el resum del model al final
+    summary=True       # si es vol mostrar el resum del model al final
 ):
     """
     Entrena un model LSTM amb validació i EarlyStopping, mantenint l'ordre si es vol.
@@ -282,6 +323,8 @@ def train_model(
         patience=patience,
         restore_best_weights=True
     )
+
+    print('Entrenant el model LSTM')
 
     history = model.fit(
         X_train, y_train,
@@ -614,7 +657,7 @@ def prediccio_iterativa_reinjection_multi(model, X_test, df_test_pred, scaler, r
 # ================================================================
 
 
-def calcular_metriques(df_test_pred, col_real='valor', col_preds=['pred_batch', 'pred_iter', 'pred_reinject'],window_size=0):
+def calcular_metriques(df_test_pred, window_size , col_real='valor', col_preds=['pred_batch', 'pred_iter', 'pred_reinject']):
     """
     Calcula RMSE, MSE i MAE per diferents columnes de predicció respecte a una columna real.
 
@@ -637,14 +680,17 @@ def calcular_metriques(df_test_pred, col_real='valor', col_preds=['pred_batch', 
         mae = mean_absolute_error(y_true, y_pred)
         metriques[col] = [rmse, mse, mae]
 
-    df_metriques = pd.DataFrame(metriques).set_index('Mètrica').round(4)
+    df_metriques = pd.DataFrame(metriques).set_index('Mètrica')
+
+    # Força la visualització amb 4 decimals
+    pd.set_option('display.float_format', '{:.4f}'.format)
     
     return df_metriques
 
 
 
 
-def calcular_metriques_multiout(df_test_pred, col_real='valor', col_preds=['pred_batch', 'pred_iter', 'pred_reinject'],window_size=0, n_outputs=1):
+def calcular_metriques_multiout(df_test_pred, window_size, n_outputs, col_real='valor', col_preds=['pred_batch', 'pred_iter', 'pred_reinject']):
     """
     Calcula RMSE, MSE i MAE per diferents columnes de predicció respecte a una columna real.
 
@@ -673,74 +719,369 @@ def calcular_metriques_multiout(df_test_pred, col_real='valor', col_preds=['pred
 
 
 
-
-def plot_prediccions_lstm(
+def plot_prediccions(
     df_train,
     df_val,
     df_test_pred,
-    columnes_prediccio=None,
-    mostrar_train=False,
+    columnes_prediccio,
     dies_train=0,
     mostrar_val=False,
     title='Temperatura real i predicció LSTM',
-    station='Z1 de la Bonaigua'
+    station='',
+    show=True
 ):
-    
     """
-    Ploteja les dades reals i les prediccions d'un model LSTM.
+    Genera una figura amb les dades reals i les prediccions d'un model LSTM per a una estació meteorològica.
+
+    Aquesta funció permet representar les dades reals de la sèrie temporal de temperatura (train, validació i test),
+    així com les prediccions generades pel model LSTM, amb colors fixos per cada estratègia de predicció per tal de mantenir la consistència visual.
 
     Args:
-        df_train (pd.DataFrame): DataFrame de train amb columnes ['data', 'valor'].
-        df_val (pd.DataFrame): DataFrame de validació amb ['data', 'valor'].
-        df_test_pred (pd.DataFrame): DataFrame de test amb ['data', 'valor'] i prediccions.
-        columnes_prediccio (list): Columnes de predicció a representar (ex: ['prediccio_batch', 'prediccio_iter']).
-        mostrar_train (bool): Si es vol mostrar part del train.
-        dies_train (int): Dies finals de train a mostrar (si mostrar_train=True).
-        mostrar_val (bool): Si es vol mostrar validació.
+        df_train (pd.DataFrame): DataFrame amb les dades d'entrenament. Ha de contenir com a mínim ['data', 'valor'].
+        df_val (pd.DataFrame): DataFrame amb les dades de validació. Ha de contenir ['data', 'valor'].
+        df_test_pred (pd.DataFrame): DataFrame amb les dades de test i prediccions. Ha de contenir ['data', 'valor'] i les columnes de predicció.
+        columnes_prediccio (list of str): Llista de noms de columnes de predicció a representar, com ara ['prediccio_batch', 'prediccio_iter'].
+        dies_train (int): Nombre de dies finals del train que es volen mostrar (només si mostrar_train=True).
+        mostrar_val (bool): Si es vol representar la sèrie de validació.
         title (str): Títol del gràfic.
-        station (str): Nom de l'estació per incloure al títol.
+        station (str): Nom de l'estació per afegir al títol.
+        show (bool): Si es vol mostrar el gràfic al final de la funció. Per defecte True.
+
+    Returns:
+        fig (matplotlib.figure.Figure): Objecte figura amb el gràfic generat.
     """
-    plt.figure(figsize=(16, 5))
+    import matplotlib.pyplot as plt
+    import matplotlib.dates as mdates
 
-    if mostrar_train and dies_train > 0:
-        data_limit = df_train['data'].max() - pd.Timedelta(days=dies_train)
-        df_train_filtrat = df_train[df_train['data'] >= data_limit]
-        plt.plot(df_train_filtrat['data'], df_train_filtrat['valor'],
-                 label=f'Train (últims {dies_train} dies)', color='firebrick', linewidth=1.5)
+    fig, ax = plt.subplots(figsize=(16, 5))
 
+    # Mostrar últims dies del train i validació si s'especifica
     if mostrar_val:
-        plt.plot(df_val['data'], df_val['valor'],
-                 label='Validació', color='darkgreen', linewidth=1.5)
+        if dies_train > 0:
+            data_limit = df_train['data'].max() - pd.Timedelta(days=dies_train)
+            df_train_filtrat = df_train[df_train['data'] >= data_limit]
+            ax.plot(df_train_filtrat['data'], df_train_filtrat['valor'], label=f'Train (últims {dies_train} dies)', color='firebrick', linewidth=1.5)
 
-    # Dades reals de test
-    plt.plot(df_test_pred['data'], df_test_pred['valor'],
-             label='Test', color='steelblue', linewidth=1.5)
+        ax.plot(df_val['data'], df_val['valor'], label='Validació', color='darkgreen', linewidth=1.5)
+
+
+    # Test (color fix)
+    ax.plot(df_test_pred['data'], df_test_pred['valor'],
+            label='Test', color='steelblue', linewidth=1.5)
+
+    # Colors fixos per a cada estratègia coneguda
+    colors_pred = {
+        'pred_batch': 'darkorange',
+        'pred_iter': 'purple',
+        'pred_reinject': 'green'
+    }
+
+    linestyle_pred = '--'
 
     # Prediccions
-    colors = ['darkorange', 'purple', 'green', 'brown', 'teal']
-    linestyles = ['--', '--', '--', '--', '--']
-
     if columnes_prediccio:
-        for i, col in enumerate(columnes_prediccio):
-            plt.plot(df_test_pred['data'], df_test_pred[col],
-                     label=col.replace('_', ' ').capitalize(),
-                     color=colors[i % len(colors)],
-                     linestyle=linestyles[i % len(linestyles)],
-                     linewidth=1.5)
+        for col in columnes_prediccio:
+            color = colors_pred.get(col, 'gray')  # Color per defecte si no està definit
+            label = col.replace('_', ' ').capitalize()
+            ax.plot(df_test_pred['data'], df_test_pred[col],
+                    label=label, color=color, linestyle=linestyle_pred, linewidth=1.5)
 
-    # Format general
-    plt.title(f'{title} - Estació {station}', fontsize=17, weight='bold')
-    plt.xlabel('Data', fontsize=14)
-    plt.ylabel('Temperatura (°C)', fontsize=14)
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=12)
-    plt.grid(True, linestyle='--', alpha=0.5, linewidth=0.6)
-    plt.legend(fontsize=12, frameon=False)
+    # Format general del gràfic
+    ax.set_title(f'{title}', fontsize=17, weight='bold')
+    ax.set_xlabel('Data', fontsize=14)
+    ax.set_ylabel('Temperatura (°C)', fontsize=14)
+    ax.tick_params(axis='both', labelsize=12)
+    ax.grid(True, linestyle='--', alpha=0.5, linewidth=0.6)
+    ax.legend(fontsize=12, frameon=False)
 
-    # Format de dates
-    plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%Y %m'))
-    plt.gca().xaxis.set_major_locator(mdates.MonthLocator(interval=1))
-    plt.gcf().autofmt_xdate()
+    # Format de les dates a l'eix X
+    ax.xaxis.set_major_formatter(mdates.DateFormatter('%Y %m'))
+    ax.xaxis.set_major_locator(mdates.MonthLocator(interval=1))
+    fig.autofmt_xdate()
+    fig.tight_layout()
 
-    plt.tight_layout()
-    plt.show()
+    # Mostrar el gràfic si s'indica
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)
+
+    return fig
+
+
+
+
+
+
+# ================================================================
+# Funcio Pipeline per a entrenar i predir amb LSTM
+# ================================================================
+
+
+
+# Funció principal per Definir i entrenar el model LSTM
+
+def deftrain_model_lstm(
+    df_lstm,                 # DataFrame amb la columna 'valor' a escalar i utilitzar
+    window_size=24,          # Mida de la finestra temporal (timesteps)
+    n_outputs=1,             # Nombre de passos a predir (1 per regressió simple, >1 per multi-output)
+    n_layers=3,              # Nombre de capes LSTM
+    n_units=64,              # Nombre de neurones per capa LSTM
+    dropout_rate=0.2,        # Percentatge de dropout entre capes
+    usar_dropout=True,       # Si s'utilitza dropout entre capes
+    optimizer='adam',        # Optimitzador per compilar el model
+    loss='mse',              # Funció de pèrdua per compilar el model
+    epochs=50,               # Nombre d'èpoques d'entrenament
+    batch_size=32,           # Mida del lot per l'entrenament
+    patience=5,              # Paciencia per EarlyStopping
+    shuffle=False,           # Si es barregen les dades durant l'entrenament (sempre False en seqüències temporals)
+    seed=42                  # Llavor per a la reproduïbilitat (per fixar llavors aleatòries en numpy i tensorflow)
+):
+    """
+    Entrena un model LSTM amb les dades proporcionades, aplicant escalat i creació de seqüències.
+
+    Args:
+        df_lstm (pd.DataFrame): DataFrame amb la columna 'valor'.
+        window_size (int): Mida de la finestra temporal.
+        n_outputs (int): Nombre de passos a predir.
+        n_layers (int): Nombre de capes LSTM.
+        n_units (int): Nombre de neurones per capa.
+        dropout_rate (float): Percentatge de dropout entre capes.
+        usar_dropout (bool): Si s’utilitza dropout.
+        optimizer (str): Optimitzador.
+        loss (str): Funció de pèrdua.
+        epochs (int): Nombre d’èpoques d’entrenament.
+        batch_size (int): Mida del lot.
+        patience (int): Paciencia per EarlyStopping.
+        shuffle (bool): Si es barregen les dades.
+        seed (int): Sement per a la reproduïbilitat.
+
+    Returns:
+        model, scaler, X_train, y_train, X_val, y_val, X_test, y_test,
+        df_train, df_val, df_test, history
+    """
+    # Separar el DataFrame en train, val i test
+    df_train, df_val, df_test = split_dades(df_lstm)
+
+    # Escalar les dades
+    df_train, df_val, df_test, scaler = escalar_dades(df_train, df_val, df_test)
+
+
+    # Crear seqüències per la LSTM
+    X_train, y_train = create_sequences(df_train['valor_scaled'].values, window_size, n_outputs, n_slide=n_outputs)
+    X_val, y_val = create_sequences(df_val['valor_scaled'].values, window_size, n_outputs, n_slide=n_outputs)
+    X_test, y_test = create_sequences(df_test['valor_scaled'].values, window_size, n_outputs, n_slide=n_outputs)
+
+
+
+    # Definir i compilar el model LSTM
+    model = definir_model_lstm(window_size, n_features=1, n_outputs=n_outputs,
+                               n_layers=n_layers, n_units=n_units,
+                               dropout_rate=dropout_rate, usar_dropout=usar_dropout,
+                               optimizer=optimizer, loss=loss)
+
+
+    # Entrenar el model
+    history = train_model(model, X_train, y_train, X_val, y_val,
+                          epochs=epochs, batch_size=batch_size,
+                          patience=patience, shuffle=shuffle, seed=seed,summary=True)
+
+
+
+    # Mostrar Gràfic de pèrdua d'entrenament i validació
+    plot_loss_train_val(history)
+
+
+    # Retornar els objectes claus del procés
+    print('Entrenament completat.')
+    return model, scaler, X_train, y_train, X_val, y_val, X_test, y_test, df_train, df_val, df_test, history
+
+
+
+
+
+
+
+# Funció per aplicar prediccions amb un model LSTM entrenat
+
+def prediu_model_lstm(
+    model,                                                  # Model LSTM entrenat
+    X_test,                                                 # Seqüències d’entrada per a test (forma: (n_samples, window_size, 1))
+    df_test,                                                # DataFrame original de test amb la columna 'valor_scaled'
+    scaler,                                                 # MinMaxScaler utilitzat per desescalar les prediccions
+    window_size,                                            # Mida de la finestra temporal
+    n_outputs ,                                              # Nombre de passos de predicció (1 per regressió simple, >1 per multi-output)
+    met_pred = ['pred_batch', 'pred_iter', 'pred_reinject']   # Metodes de predicció a utilitzar
+):
+    """
+    Aplica prediccions amb un model LSTM entrenat.
+
+    Args:
+        model (keras.Model): Model LSTM entrenat.
+        X_test (np.array): Seqüències d’entrada per a test.
+        df_test (pd.DataFrame): DataFrame original de test.
+        scaler (MinMaxScaler): Escalador utilitzat per desescalar.
+        window_size (int): Mida de finestra temporal.
+        n_outputs (int): Nombre de passos de predicció.
+
+    Returns:
+        df_test_pred (pd.DataFrame): Test amb prediccions.
+        metriques (dict): Diccionari amb mètriques d’error.
+    """
+
+
+    # Crear copia df_test per a les prediccions 
+    df_test_pred = df_test.copy()
+
+
+    if n_outputs == 1:
+
+        if 'pred_batch' in met_pred:
+            df_test_pred = prediccio_batch(model, X_test, df_test_pred, scaler)
+        
+        if 'pred_iter' in met_pred:
+            df_test_pred = prediccio_step_iterativa(model, X_test, df_test_pred, scaler)
+
+        if 'pred_reinject' in met_pred:
+            df_test_pred = prediccio_iterativa_reinjection(model, X_test, df_test_pred, scaler)
+
+
+        # Calcular mètriques per a les prediccions
+        metriques = calcular_metriques(df_test_pred, col_real='valor',
+                                        col_preds=met_pred,
+                                        window_size=window_size)
+    else:
+        df_test_pred = prediccio_batch_multi(model, X_test, df_test_pred, scaler,
+                                             window_size=window_size, 
+                                             n_outputs=n_outputs)
+
+        metriques = calcular_metriques_multiout(df_test_pred, col_real='valor',
+                                                col_preds=['pred_batch'],
+                                                window_size=window_size,
+                                                n_outputs=n_outputs)
+
+
+
+    # Retornar el DataFrame de test amb les prediccions i el dataframe de mètriques
+    return df_test_pred, metriques
+
+
+
+
+
+
+
+### Pipeline que unifica les 3 funcions si escau
+
+def pipeline_lstm(
+    df_lstm,                                 # DataFrame amb la columna 'valor' a escalar i utilitzar
+    window_size=24,                          # Mida de la finestra temporal (timesteps)
+    n_outputs=1,                             # Nombre de passos a predir (1 per regressió simple, >1 per multi-output)
+    n_layers=3,                              # Nombre de capes LSTM
+    n_units=64,                              # Nombre de neurones per capa LSTM
+    dropout_rate=0.2,                        # Percentatge de dropout entre capes
+    usar_dropout=True,                       # Si s'utilitza dropout entre capes
+    optimizer='adam',                        # Optimitzador per compilar el model
+    loss='mse',                              # Funció de pèrdua per compilar el model
+    epochs=50,                               # Nombre d'èpoques d'entrenament
+    batch_size=32,                           # Mida del lot per l'entrenament
+    patience=5,                              # Paciencia per EarlyStopping
+    shuffle=False,                           # Si es barregen les dades durant l'entrenament (sempre False en seqüències temporals)
+    seed=42,                                 # Llavor per a la reproduïbilitat (per fixar llavors aleatòries en numpy i tensorflow)
+    dies_train=0,                            # Nombre de dies finals del train que es volen mostrar (només si mostrar_train=True)
+    mostrar_val=False,                       # Si es vol mostrar la sèrie de validació
+    columnes_prediccio_plot=None,            # Llista de noms de columnes de predicció a representar
+    station=''                               # Nom de l'estació per afegir al títol del gràfic
+):
+    """
+    Pipeline complet que entrena, prediu i mostra gràfic per a un model LSTM.
+
+    Aquesta funció integra tot el procés: entrenament, predicció i visualització.
+
+    Retorna:
+        model: objecte LSTM entrenat
+        scaler: escalador MinMaxScaler
+        df_train: DataFrame de train escalat
+        df_val: DataFrame de validació escalat
+        df_test_pred: DataFrame de test amb prediccions
+        history: historial d'entrenament del model
+        metriques: diccionari amb mètriques d'avaluació
+        plot: objecte del gràfic generat
+    """
+    
+    model, scaler, X_train, y_train, X_val, y_val, X_test, y_test, df_train, df_val, df_test, history = \
+        deftrain_model_lstm(
+            df_lstm=df_lstm,
+            window_size=window_size,
+            n_outputs=n_outputs,
+            n_layers=n_layers,
+            n_units=n_units,
+            dropout_rate=dropout_rate,
+            usar_dropout=usar_dropout,
+            optimizer=optimizer,
+            loss=loss,
+            epochs=epochs,
+            batch_size=batch_size,
+            patience=patience,
+            shuffle=shuffle,
+            seed=seed
+        )
+
+    df_test_pred, metriques = prediu_model_lstm(
+        model=model,
+        X_test=X_test,
+        df_test=df_test,
+        scaler=scaler,
+        window_size=window_size,
+        n_outputs=n_outputs
+    )
+
+    plot = plot_prediccions(
+        df_train=df_train,
+        df_val=df_val,
+        df_test_pred=df_test_pred,
+        columnes_prediccio=columnes_prediccio_plot,
+        dies_train=dies_train,
+        mostrar_val=mostrar_val,
+        title='Temperatura real i predicció LSTM',
+        station=station,
+        show=True
+    )
+
+    return model, scaler, df_train, df_val, df_test_pred, history, metriques, plot
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
