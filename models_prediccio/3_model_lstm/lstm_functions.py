@@ -33,6 +33,7 @@ import random
 # ============================
 import numpy as np
 import pandas as pd
+import json
 
 # ============================
 # Visualització
@@ -226,7 +227,6 @@ def definir_model_lstm(
     n_layers=3,        # nombre total de capes LSTM
     n_units=64,        # neurones per cada capa LSTM
     dropout_rate=0.2,  # percentatge de neurones a desactivar (Dropout)
-    usar_dropout=True, # afegir Dropout entre capes
     optimizer='adam',  # optimitzador per compilar el model
     loss='mse'         # funció de pèrdua (ideal 'mse' per regressió)
 ):
@@ -241,7 +241,6 @@ def definir_model_lstm(
         n_layers (int): nombre total de capes LSTM.
         n_units (int): neurones per capa LSTM.
         dropout_rate (float): percentatge de neurones a desactivar si s'utilitza Dropout.
-        usar_dropout (bool): si es vol afegir Dropout entre capes.
         optimizer (str): optimitzador per compilar el model.
         loss (str): funció de pèrdua per compilar el model.
 
@@ -253,19 +252,19 @@ def definir_model_lstm(
     # Capa inicial LSTM (amb input_shape)
     # Si hi ha més d'una capa, cal que retorni seqüència
     model.add(LSTM(n_units, return_sequences=(n_layers > 1), input_shape=(window_size, n_features)))
-    if usar_dropout:
+    if dropout_rate > 0:
         model.add(Dropout(dropout_rate))
 
     # Capes intermèdies (si n_layers >= 3)
     for _ in range(n_layers - 2):
         model.add(LSTM(n_units, return_sequences=True))
-        if usar_dropout:
+        if dropout_rate > 0:
             model.add(Dropout(dropout_rate))
 
     # Última capa LSTM (si n_layers >= 2)(sense return_sequences)
     if n_layers > 1:
         model.add(LSTM(n_units))
-        if usar_dropout:
+        if dropout_rate > 0:
             model.add(Dropout(dropout_rate))
 
     # Capa de sortida (1 neurona per cada output)
@@ -345,7 +344,7 @@ def train_model(
 
 
 
-def plot_loss_train_val(history):
+def plot_loss_train_val(history,show=True):
 
     fig, ax = plt.subplots(figsize=(8,4))
 
@@ -366,9 +365,13 @@ def plot_loss_train_val(history):
 
     ax.legend()
     ax.grid(True)
-    plt.show()
 
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)
 
+    return fig
 
 
 # ================================================================
@@ -564,7 +567,6 @@ def prediccio_step_iterativa_multi(model, X_test, df_test_pred, scaler, nom_colu
 
     Returns:
         df_test_pred (DataFrame): amb la nova columna de predicció iterativa afegida.
-        y_pred_rescaled (np.array): prediccions desescalades (forma: (n_preds_total,)).
     """
     window_size = X_test.shape[1]
     n_outputs = model.output_shape[-1]
@@ -611,7 +613,6 @@ def prediccio_iterativa_reinjection_multi(model, X_test, df_test_pred, scaler, r
 
     Returns:
         df_test_pred (DataFrame): amb la nova columna de prediccions afegida.
-        y_pred_rescaled (np.array): prediccions desescalades (forma: (n_preds_total,)).
     """
     window_size = X_test.shape[1]
     n_outputs = model.output_shape[-1]
@@ -674,7 +675,13 @@ def calcular_metriques(df_test_pred, window_size , col_real='valor', col_preds=[
     y_true = df_test_pred[col_real][window_size:]
 
     for col in col_preds:
+
+        if col not in df_test_pred.columns:
+            print(f"⚠️ Avís: la columna '{col}' no existeix a df_test_pred. Es descarta.")
+            continue
+
         y_pred = df_test_pred[col][window_size:]
+
         rmse = np.sqrt(mean_squared_error(y_true, y_pred))
         mse = mean_squared_error(y_true, y_pred)
         mae = mean_absolute_error(y_true, y_pred)
@@ -682,10 +689,8 @@ def calcular_metriques(df_test_pred, window_size , col_real='valor', col_preds=[
 
     df_metriques = pd.DataFrame(metriques).set_index('Mètrica')
 
-    # Força la visualització amb 4 decimals
-    pd.set_option('display.float_format', '{:.4f}'.format)
     
-    return df_metriques
+    return df_metriques.round(4)
 
 
 
@@ -707,15 +712,22 @@ def calcular_metriques_multiout(df_test_pred, window_size, n_outputs, col_real='
     y_true = df_test_pred[col_real][window_size:(1-n_outputs)]
 
     for col in col_preds:
+
+        if col not in df_test_pred.columns:
+            print(f"⚠️ Avís: la columna '{col}' no existeix a df_test_pred. Es descarta.")
+            continue
+
         y_pred = df_test_pred[col][window_size:(1-n_outputs)]
+
         rmse = np.sqrt(mean_squared_error(y_true, y_pred))
         mse = mean_squared_error(y_true, y_pred)
         mae = mean_absolute_error(y_true, y_pred)
         metriques[col] = [rmse, mse, mae]
 
     df_metriques = pd.DataFrame(metriques).set_index('Mètrica').round(4)
+
     
-    return df_metriques
+    return df_metriques.round(4)
 
 
 
@@ -723,11 +735,10 @@ def plot_prediccions(
     df_train,
     df_val,
     df_test_pred,
-    columnes_prediccio,
+    col_preds=['pred_batch', 'pred_iter', 'pred_reinject'],
     dies_train=0,
     mostrar_val=False,
     title='Temperatura real i predicció LSTM',
-    station='',
     show=True
 ):
     """
@@ -740,7 +751,7 @@ def plot_prediccions(
         df_train (pd.DataFrame): DataFrame amb les dades d'entrenament. Ha de contenir com a mínim ['data', 'valor'].
         df_val (pd.DataFrame): DataFrame amb les dades de validació. Ha de contenir ['data', 'valor'].
         df_test_pred (pd.DataFrame): DataFrame amb les dades de test i prediccions. Ha de contenir ['data', 'valor'] i les columnes de predicció.
-        columnes_prediccio (list of str): Llista de noms de columnes de predicció a representar, com ara ['prediccio_batch', 'prediccio_iter'].
+        col_preds (list of str): Llista de noms de columnes de predicció a representar, com ara ['prediccio_batch', 'prediccio_iter'].
         dies_train (int): Nombre de dies finals del train que es volen mostrar (només si mostrar_train=True).
         mostrar_val (bool): Si es vol representar la sèrie de validació.
         title (str): Títol del gràfic.
@@ -750,8 +761,6 @@ def plot_prediccions(
     Returns:
         fig (matplotlib.figure.Figure): Objecte figura amb el gràfic generat.
     """
-    import matplotlib.pyplot as plt
-    import matplotlib.dates as mdates
 
     fig, ax = plt.subplots(figsize=(16, 5))
 
@@ -779,12 +788,18 @@ def plot_prediccions(
     linestyle_pred = '--'
 
     # Prediccions
-    if columnes_prediccio:
-        for col in columnes_prediccio:
+    if col_preds:
+        
+        for col in col_preds:
+            
+            if col not in df_test_pred.columns:
+                continue  # Si la columna no existeix, la saltem
+            
             color = colors_pred.get(col, 'gray')  # Color per defecte si no està definit
             label = col.replace('_', ' ').capitalize()
             ax.plot(df_test_pred['data'], df_test_pred[col],
                     label=label, color=color, linestyle=linestyle_pred, linewidth=1.5)
+
 
     # Format general del gràfic
     ax.set_title(f'{title}', fontsize=17, weight='bold')
@@ -813,9 +828,12 @@ def plot_prediccions(
 
 
 
-# ================================================================
-# Funcio Pipeline per a entrenar i predir amb LSTM
-# ================================================================
+
+
+# ============================================================================================
+# Funcions unificades per a la creació i entrenament del model LSTM i prediccions
+# Aquestes funcions encapsulen tot el procés de preparació de dades, entrenament i predicció
+# =============================================================================================
 
 
 
@@ -828,14 +846,15 @@ def deftrain_model_lstm(
     n_layers=3,              # Nombre de capes LSTM
     n_units=64,              # Nombre de neurones per capa LSTM
     dropout_rate=0.2,        # Percentatge de dropout entre capes
-    usar_dropout=True,       # Si s'utilitza dropout entre capes
     optimizer='adam',        # Optimitzador per compilar el model
     loss='mse',              # Funció de pèrdua per compilar el model
     epochs=50,               # Nombre d'èpoques d'entrenament
     batch_size=32,           # Mida del lot per l'entrenament
     patience=5,              # Paciencia per EarlyStopping
     shuffle=False,           # Si es barregen les dades durant l'entrenament (sempre False en seqüències temporals)
-    seed=42                  # Llavor per a la reproduïbilitat (per fixar llavors aleatòries en numpy i tensorflow)
+    seed=42,                 # Llavor per a la reproduïbilitat (per fixar llavors aleatòries en numpy i tensorflow)
+    summary=True,            # Si es vol mostrar el resum del model al final de l'entrenament
+    show=True                # Si es vol mostrar el gràfic de pèrdua d'entrenament i validació
 ):
     """
     Entrena un model LSTM amb les dades proporcionades, aplicant escalat i creació de seqüències.
@@ -847,7 +866,6 @@ def deftrain_model_lstm(
         n_layers (int): Nombre de capes LSTM.
         n_units (int): Nombre de neurones per capa.
         dropout_rate (float): Percentatge de dropout entre capes.
-        usar_dropout (bool): Si s’utilitza dropout.
         optimizer (str): Optimitzador.
         loss (str): Funció de pèrdua.
         epochs (int): Nombre d’èpoques d’entrenament.
@@ -877,41 +895,37 @@ def deftrain_model_lstm(
     # Definir i compilar el model LSTM
     model = definir_model_lstm(window_size, n_features=1, n_outputs=n_outputs,
                                n_layers=n_layers, n_units=n_units,
-                               dropout_rate=dropout_rate, usar_dropout=usar_dropout,
+                               dropout_rate=dropout_rate,
                                optimizer=optimizer, loss=loss)
 
 
     # Entrenar el model
     history = train_model(model, X_train, y_train, X_val, y_val,
                           epochs=epochs, batch_size=batch_size,
-                          patience=patience, shuffle=shuffle, seed=seed,summary=True)
+                          patience=patience, shuffle=shuffle, seed=seed,summary=summary)
 
 
 
     # Mostrar Gràfic de pèrdua d'entrenament i validació
-    plot_loss_train_val(history)
+    fig_loss_train = plot_loss_train_val(history, show=show)
 
 
     # Retornar els objectes claus del procés
     print('Entrenament completat.')
-    return model, scaler, X_train, y_train, X_val, y_val, X_test, y_test, df_train, df_val, df_test, history
-
-
-
-
+    return model, scaler, X_train, y_train, X_val, y_val, X_test, y_test, df_train, df_val, df_test, history, fig_loss_train
 
 
 
 # Funció per aplicar prediccions amb un model LSTM entrenat
 
 def prediu_model_lstm(
-    model,                                                  # Model LSTM entrenat
-    X_test,                                                 # Seqüències d’entrada per a test (forma: (n_samples, window_size, 1))
-    df_test,                                                # DataFrame original de test amb la columna 'valor_scaled'
-    scaler,                                                 # MinMaxScaler utilitzat per desescalar les prediccions
-    window_size,                                            # Mida de la finestra temporal
-    n_outputs ,                                              # Nombre de passos de predicció (1 per regressió simple, >1 per multi-output)
-    met_pred = ['pred_batch', 'pred_iter', 'pred_reinject']   # Metodes de predicció a utilitzar
+    model,                                                      # Model LSTM entrenat
+    X_test,                                                     # Seqüències d’entrada per a test (forma: (n_samples, window_size, 1))
+    df_test,                                                    # DataFrame original de test amb la columna 'valor_scaled'
+    scaler,                                                     # MinMaxScaler utilitzat per desescalar les prediccions
+    window_size,                                                # Mida de la finestra temporal
+    n_outputs ,                                                 # Nombre de passos de predicció (1 per regressió simple, >1 per multi-output)
+    met_pred = ['pred_batch', 'pred_iter', 'pred_reinject']     # Metodes de predicció a utilitzar
 ):
     """
     Aplica prediccions amb un model LSTM entrenat.
@@ -971,61 +985,78 @@ def prediu_model_lstm(
 
 
 
-### Pipeline que unifica les 3 funcions si escau
+# ============================================================================================================
+# Pipeline que unifica les funcions de creació, entrenament i predicció, amb opcions de plot i guardat
+# ============================================================================================================
 
 def pipeline_lstm(
-    df_lstm,                                 # DataFrame amb la columna 'valor' a escalar i utilitzar
-    window_size=24,                          # Mida de la finestra temporal (timesteps)
-    n_outputs=1,                             # Nombre de passos a predir (1 per regressió simple, >1 per multi-output)
-    n_layers=3,                              # Nombre de capes LSTM
-    n_units=64,                              # Nombre de neurones per capa LSTM
-    dropout_rate=0.2,                        # Percentatge de dropout entre capes
-    usar_dropout=True,                       # Si s'utilitza dropout entre capes
-    optimizer='adam',                        # Optimitzador per compilar el model
-    loss='mse',                              # Funció de pèrdua per compilar el model
-    epochs=50,                               # Nombre d'èpoques d'entrenament
-    batch_size=32,                           # Mida del lot per l'entrenament
-    patience=5,                              # Paciencia per EarlyStopping
-    shuffle=False,                           # Si es barregen les dades durant l'entrenament (sempre False en seqüències temporals)
-    seed=42,                                 # Llavor per a la reproduïbilitat (per fixar llavors aleatòries en numpy i tensorflow)
-    dies_train=0,                            # Nombre de dies finals del train que es volen mostrar (només si mostrar_train=True)
-    mostrar_val=False,                       # Si es vol mostrar la sèrie de validació
-    columnes_prediccio_plot=None,            # Llista de noms de columnes de predicció a representar
-    station=''                               # Nom de l'estació per afegir al títol del gràfic
+    df_lstm,
+    window_size=24,
+    n_outputs=1,
+    n_layers=3,
+    n_units=64,
+    dropout_rate=0.2,
+    optimizer='adam',
+    loss='mse',
+    epochs=50,
+    batch_size=32,
+    patience=5,
+    shuffle=False,
+    seed=42,
+    dies_train=0,
+    mostrar_val=False,
+    col_preds=None,
+    save_path=None,
+    show=True,
+    summary=True
 ):
     """
-    Pipeline complet que entrena, prediu i mostra gràfic per a un model LSTM.
+    Pipeline complet per entrenar, predir i visualitzar un model LSTM de predicció de temperatura.
 
-    Aquesta funció integra tot el procés: entrenament, predicció i visualització.
+    Aquesta funció integra els tres blocs principals del flux de treball amb xarxes LSTM:
+    - Entrenament del model amb dades seqüencials
+    - Predicció sobre el conjunt de test
+    - Visualització de les prediccions juntament amb les dades reals
+
+    Si s'indica un directori a `save_path`, es guardaran automàticament:
+        - El model entrenat (`model.h5`)
+        - L’historial d'entrenament (`loss_history.csv`) i la gràfica de pèrdua (`loss_plot.png`)
+        - Les prediccions (`prediccions.csv`)
+        - Les mètriques d’avaluació (`metrics.csv` i `metrics.txt`)
+        - La configuració de l’experiment (`config.json`)
 
     Retorna:
-        model: objecte LSTM entrenat
-        scaler: escalador MinMaxScaler
-        df_train: DataFrame de train escalat
-        df_val: DataFrame de validació escalat
-        df_test_pred: DataFrame de test amb prediccions
-        history: historial d'entrenament del model
-        metriques: diccionari amb mètriques d'avaluació
-        plot: objecte del gràfic generat
+        model, scaler, df_train, df_val, df_test_pred, history, metriques, fig, fig_loss_train
     """
-    
-    model, scaler, X_train, y_train, X_val, y_val, X_test, y_test, df_train, df_val, df_test, history = \
-        deftrain_model_lstm(
-            df_lstm=df_lstm,
-            window_size=window_size,
-            n_outputs=n_outputs,
-            n_layers=n_layers,
-            n_units=n_units,
-            dropout_rate=dropout_rate,
-            usar_dropout=usar_dropout,
-            optimizer=optimizer,
-            loss=loss,
-            epochs=epochs,
-            batch_size=batch_size,
-            patience=patience,
-            shuffle=shuffle,
-            seed=seed
-        )
+
+    print("🧠 [1/5] Entrenant el model LSTM...")
+
+    model, scaler, X_train, y_train, X_val, y_val, X_test, y_test, df_train, df_val, df_test, history, fig_loss_train = deftrain_model_lstm(
+        df_lstm=df_lstm,
+        window_size=window_size,
+        n_outputs=n_outputs,
+        n_layers=n_layers,
+        n_units=n_units,
+        dropout_rate=dropout_rate,
+        optimizer=optimizer,
+        loss=loss,
+        epochs=epochs,
+        batch_size=batch_size,
+        patience=patience,
+        shuffle=shuffle,
+        seed=seed,
+        summary= summary,
+        show=show
+    )
+
+    if save_path:
+        print("💾 [2/5] Guardant model i gràfica de pèrdua...")
+        os.makedirs(save_path, exist_ok=True)
+        model.save(os.path.join(save_path, "model.h5"), include_optimizer=False)
+        pd.DataFrame(history.history).to_csv(os.path.join(save_path, "loss_history.csv"))
+        fig_loss_train.savefig(os.path.join(save_path, "loss_plot.png"))
+
+    print("🔮 [3/5] Fent prediccions...")
 
     df_test_pred, metriques = prediu_model_lstm(
         model=model,
@@ -1036,23 +1067,118 @@ def pipeline_lstm(
         n_outputs=n_outputs
     )
 
-    plot = plot_prediccions(
+    print("📊 [4/5] Generant gràfic de prediccions...")
+
+    fig = plot_prediccions(
         df_train=df_train,
         df_val=df_val,
         df_test_pred=df_test_pred,
-        columnes_prediccio=columnes_prediccio_plot,
+        col_preds=col_preds,
         dies_train=dies_train,
         mostrar_val=mostrar_val,
         title='Temperatura real i predicció LSTM',
-        station=station,
-        show=True
+        show=show
     )
 
-    return model, scaler, df_train, df_val, df_test_pred, history, metriques, plot
+    if save_path:
+        print("🗃️ [5/5] Guardant prediccions, mètriques i configuració...")
+        df_test_pred.to_csv(os.path.join(save_path, "prediccions.csv"), index=False)
+        metriques.to_csv(os.path.join(save_path, "metrics.csv"))
+
+        with open(os.path.join(save_path, "metrics.txt"), "w") as f:
+            for col in metriques.columns:
+                f.write(f"{col}: {metriques[col].values[0]:.4f}\n")
+
+        fig.savefig(os.path.join(save_path, "plot.png"))
+
+        config = {
+            'window_size': window_size,
+            'n_outputs': n_outputs,
+            'n_layers': n_layers,
+            'n_units': n_units,
+            'dropout_rate': dropout_rate,
+            'optimizer': optimizer,
+            'loss': loss,
+            'epochs': epochs,
+            'batch_size': batch_size,
+            'patience': patience,
+            'shuffle': shuffle,
+            'seed': seed
+        }
+
+        with open(os.path.join(save_path, "config.json"), "w") as f:
+            json.dump(config, f, indent=2)
+
+    return model, scaler, df_train, df_val, df_test_pred, history, metriques, fig, fig_loss_train
+
+
+# ===============================================================
+# WRAPPERS D'ENTRENAMENT I EXECUCIÓ D'EXPERIMENTS
+# ===============================================================
+
+def construir_nom_experiment(params: dict, prefix="exp"):
+    """
+    Construeix un nom únic per identificar cada experiment segons els hiperparàmetres.
+    """
+    parts = [
+        f"win{params.get('window_size', 24)}",
+        f"out{params.get('n_outputs', 1)}",
+        f"lay{params.get('n_layers', 2)}",
+        f"uni{params.get('n_units', 64)}",
+        f"drop{int(params.get('dropout_rate', 0.2) * 100)}"
+    ]
+    nom = "_".join(parts)
+    return f"{prefix}_{nom}"
 
 
 
 
+
+def executar_experiment(
+    df,
+    params: dict,
+    save_path: str = None,
+    col_preds=['pred_batch', 'pred_iter', 'pred_reinject'],
+    dies_train=0,
+    mostrar_val=False
+):
+    """
+    Wrapper per executar un experiment amb la pipeline LSTM i guardar-ne els resultats.
+
+    Args:
+        df (pd.DataFrame): DataFrame amb les dades originals
+        params (dict): Diccionari amb hiperparàmetres de l'experiment
+        save_path (str, optional): Ruta per guardar els resultats
+        col_preds (list): Columnes de predicció a mostrar al gràfic
+        dies_train (int): Dies finals de train a mostrar (si escau)
+        mostrar_val (bool): Si s'ha de mostrar també la validació
+    """
+
+    if save_path is None:
+        nom = construir_nom_experiment(params)
+        save_path = os.path.join("resultats", nom)
+
+    pipeline_lstm(
+        df_lstm=df,
+        window_size=params.get('window_size', 24),
+        n_outputs=params.get('n_outputs', 1),
+        n_layers=params.get('n_layers', 2),
+        n_units=params.get('n_units', 64),
+        dropout_rate=params.get('dropout_rate', 0.2),
+        optimizer=params.get('optimizer', 'adam'),
+        loss=params.get('loss', 'mse'),
+        epochs=params.get('epochs', 50),
+        batch_size=params.get('batch_size', 32),
+        patience=params.get('patience', 5),
+        shuffle=params.get('shuffle', False),
+        seed=params.get('seed', 42),
+        dies_train=dies_train,
+        mostrar_val=mostrar_val,
+        col_preds=col_preds,
+        save_path=save_path,
+        summary =False,          # ❌ Desactiva el resum del model al fer experiments massius
+        show=False              # ❌ Desactiva el plot interactiu al fer experiments massius
+    )
 
 
 
