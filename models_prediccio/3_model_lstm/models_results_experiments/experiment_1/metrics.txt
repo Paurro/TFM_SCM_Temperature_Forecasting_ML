@@ -1,0 +1,3 @@
+pred_batch: 0.8010
+pred_iter: 12.3872
+pred_reinject: 1.8109

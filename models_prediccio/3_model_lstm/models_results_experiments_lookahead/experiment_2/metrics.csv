@@ -1,0 +1,4 @@
+Mètrica,pred_batch,pred_iter,pred_reinject
+RMSE,2.8873,32.4121,3.6673
+MSE,8.3366,1050.5417,13.4492
+MAE,2.2481,25.8576,2.8878

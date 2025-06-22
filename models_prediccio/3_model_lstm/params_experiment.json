@@ -1,0 +1,18 @@
+{
+  "save_dir": "models_results_experiments_lookahead12",
+  "assignacio_num": false,      
+
+  "WINDOW_SIZE": [24, 24, 48, 72, 48, 96],
+  "N_OUTPUTS": [1, 1, 1, 1, 6, 12],
+  "N_LAYERS": [1, 1, 2, 3, 2, 3],
+  "N_UNITS": [1, 32, 64, 128, 64, 128],
+
+  "LOOKAHEAD": 12,
+  "DROPOUT_RATE": 0.2,
+  "BATCH_SIZE": 128,
+  "EPOCHS": 50,
+  "PATIENCE": 5,
+  "SEED": 42,
+
+  "PREDICTIONS_MOD": ["pred_batch", "pred_reinject"]
+}

@@ -171,45 +171,58 @@ def escalar_dades(df_train, df_val, df_test, columna='valor', verbose=True):
 
 # Creem una funció per crear sequences per LSTM d'entrada
 
-def create_sequences(series, window_size, n_outputs=1, n_slide=1):
+def create_sequences(series, window_size, n_outputs=1, n_slide=None, lookahead=0):
     """
     Crea seqüències d'entrada i sortida per predicció simple o multi-output, 
-    amb control del pas de desplaçament entre finestres.
+    amb suport per desplaçament entre finestres (n_slide) i predicció desfasada (lookahead).
 
     Args:
         series (array): sèrie temporal escalada.
         window_size (int): llargada de la finestra d'entrada.
         n_outputs (int): nombre de passos a predir (per defecte 1).
         n_slide (int): quant avancem la finestra a cada iteració (per defecte 1).
+        lookahead (int): passos entre el final de la finestra i la primera predicció (per defecte 0).
 
     LSTM espera una entrada en 3 dimensions:
-    (n_samples, window_size, n_features)
+        (n_samples, window_size, n_features)
         On:
-    - n_samples = nombre de finestres que hem generat
-    - window_size = longitud de cada finestra (número de valors consecutius)
-    - n_features = nombre de variables per timestep (en aquest cas, 1 sola: la temperatura)
+            - n_samples = nombre de finestres que hem generat
+            - window_size = longitud de cada finestra (número de valors consecutius)
+            - n_features = nombre de variables per timestep (en aquest cas, 1 sola: la temperatura)
 
     Returns:
         X (np.array): seqüències d'entrada, forma (samples, window_size, 1).
         y (np.array): seqüències de sortida, forma (samples, n_outputs) si n_outputs > 1, 
                       o (samples, 1) si n_outputs = 1.
     """
+
+    if n_slide is None:
+        n_slide = n_outputs
+
     X, y = [], []
+
+    max_i = len(series) - lookahead - n_outputs
     i = window_size
-    while i <= len(series) - n_outputs:
-        X.append(series[i - window_size:i])
+
+    while i <= max_i:
+        seq_x = series[i - window_size:i]
+        seq_y = series[i + lookahead : i + lookahead + n_outputs]
+
+        X.append(seq_x)
         if n_outputs == 1:
-            y.append(series[i])
+            y.append(seq_y[0])
         else:
-            y.append(series[i:i + n_outputs])
+            y.append(seq_y)
+
         i += n_slide
+
     X = np.array(X).reshape(-1, window_size, 1)
     y = np.array(y)
-    if n_outputs == 1:
-        y = y.reshape(-1, 1)  # Ara fa el reshape que Keras espera per a regressió 1D
-        
-    return X, y
 
+    if n_outputs == 1:
+        y = y.reshape(-1, 1)
+
+    return X, y
 
 
 
@@ -217,8 +230,6 @@ def create_sequences(series, window_size, n_outputs=1, n_slide=1):
 # ================================================================
 # Funcions per a la creació i entrenament del model LSTM
 # ================================================================
-
-
 
 def definir_model_lstm(
     window_size,       # mida de la finestra temporal (timesteps)
@@ -277,7 +288,6 @@ def definir_model_lstm(
         )
 
     return model
-
 
 
 
@@ -378,7 +388,7 @@ def plot_loss_train_val(history,show=True):
 # Funcions de predicció LSTM 1 output
 # ================================================================
 
-def prediccio_batch(model, X_test, df_test_pred, scaler, nom_columna='pred_batch'):
+def prediccio_batch(model, X_test, df_test_pred, scaler, nom_columna='pred_batch',lookahead=0):
     """
     Fa una predicció batch (totes les finestres alhora), desescala les prediccions i les afegeix directament a df_test_pred.
 
@@ -399,7 +409,7 @@ def prediccio_batch(model, X_test, df_test_pred, scaler, nom_columna='pred_batch
 
     # Assignar al DataFrame (ignorant les primeres files sense prou context)
     window_size = X_test.shape[1]
-    idx_valid = df_test_pred.index[window_size:]
+    idx_valid = df_test_pred.index[window_size + lookahead:]
     df_test_pred.loc[idx_valid, nom_columna] = y_pred_rescaled
 
     return df_test_pred
@@ -407,7 +417,7 @@ def prediccio_batch(model, X_test, df_test_pred, scaler, nom_columna='pred_batch
 
 
 
-def prediccio_step_iterativa(model, X_test, df_test_pred, scaler, nom_columna='pred_iter'):
+def prediccio_step_iterativa(model, X_test, df_test_pred, scaler, nom_columna='pred_iter', lookahead=0):
     """
     Fa una predicció multi-step iterativa, reinjectant cada predicció com a nou input,
     i afegeix les prediccions desescalades directament a df_test_pred.
@@ -439,14 +449,14 @@ def prediccio_step_iterativa(model, X_test, df_test_pred, scaler, nom_columna='p
     y_pred_rescaled = scaler.inverse_transform(np.array(preds_scaled).reshape(-1, 1)).flatten()
 
     # Assignar les prediccions desescalades al final del DataFrame
-    idx_valid = df_test_pred.index[window_size:window_size + n_passos]
+    idx_valid = df_test_pred.index[window_size + lookahead : window_size + lookahead + n_passos]
     df_test_pred.loc[idx_valid, nom_columna] = y_pred_rescaled
 
     return df_test_pred
 
 
 
-def prediccio_iterativa_reinjection(model, X_test, df_test_pred, scaler, reinjeccio=5, nom_columna='pred_reinject'):
+def prediccio_iterativa_reinjection(model, X_test, df_test_pred, scaler, reinjeccio=5, nom_columna='pred_reinject', lookahead=0):
     """
     Fa una predicció iterativa amb reinjecció de valors reals cada 'reinjeccio' passos,
     i afegeix les prediccions desescalades al df_test_pred.
@@ -494,7 +504,7 @@ def prediccio_iterativa_reinjection(model, X_test, df_test_pred, scaler, reinjec
 
     # Assignar al DataFrame
     n_preds = len(preds_scaled)
-    idx_valid = df_test_pred.index[window_size : window_size + n_preds]
+    idx_valid = df_test_pred.index[window_size + lookahead : window_size + lookahead + n_preds]
     df_test_pred.loc[idx_valid, nom_columna] = y_pred_rescaled
 
     return df_test_pred
@@ -509,7 +519,7 @@ def prediccio_iterativa_reinjection(model, X_test, df_test_pred, scaler, reinjec
 
 # Funció per fer prediccions multi-step
 
-def prediccio_batch_multi(model, X_test, df_test, scaler, window_size, n_outputs, nom_columna='pred_batch'):
+def prediccio_batch_multi(model, X_test, df_test, scaler, window_size, n_outputs, nom_columna='pred_batch',lookahead=0):
 
     """
     Fa prediccions multi-output de manera contínua i enganxa totes les prediccions al DataFrame original.
@@ -526,6 +536,7 @@ def prediccio_batch_multi(model, X_test, df_test, scaler, window_size, n_outputs
         window_size (int): Mida de la finestra d’entrada per a cada seqüència.
         n_outputs (int): Nombre de passos que prediu el model (outputs per finestra).
         nom_columna (str): Nom de la columna on es guardaran les prediccions desescalades.
+        lookahead (int): Passos entre el final de la finestra i la primera predicció (per defecte 0).
 
     Retorna:
         df_test amb la nova columna `nom_columna` que conté les prediccions (amb NaNs on no es pot predir).
@@ -534,24 +545,30 @@ def prediccio_batch_multi(model, X_test, df_test, scaler, window_size, n_outputs
     y_pred = model.predict(X_test, verbose=0)
 
     # 2. Desescalar les prediccions (per tornar a °C)
-    y_pred_rescaled = scaler.inverse_transform(y_pred)
 
+    y_pred_rescaled = scaler.inverse_transform(y_pred)
+    y_pred_rescaled = y_pred_rescaled.flatten()  # Aplanar per tenir un vector de prediccions
+    
     # 3. Inicialitzem la nova columna amb NaNs
     df_test[nom_columna] = np.nan
 
-    # 4. Omplim la columna amb les prediccions multi-output (una fila per cada pas predit)
-    for i in range(len(y_pred_rescaled)):
-        for j in range(n_outputs):
-            idx = window_size + i * n_outputs + j  # índex corresponent a la predicció j de la i-èsima seqüència
-            if idx < len(df_test):
-                df_test.at[idx, nom_columna] = y_pred_rescaled[i, j]
+    # Calcul rang disponible per a les prediccions
+    idx_inici = window_size + lookahead # Inici de les prediccions després de la finestra inicial
+    dispo = len(df_test) - idx_inici  # Espai disponible per a les prediccions
+    usable_preds = min(len(y_pred_rescaled), dispo)  # Nombre de prediccions que podem utilitzar
+
+    # 5. Assignació segura dels valors
+    df_test.iloc[idx_inici:idx_inici + usable_preds, df_test.columns.get_loc(nom_columna)] = y_pred_rescaled[:usable_preds]
+
+    # 6. Avís si hi ha truncament
+    if usable_preds < len(y_pred_rescaled):
+        print(f"⚠️ {len(y_pred_rescaled) - usable_preds} valors de predicció no s'han col·locat per falta d'espai. Prediccions truncades a {usable_preds} valors, per que superaven l'espai disponible a df_test.")
 
     return df_test
 
 
 
-
-def prediccio_step_iterativa_multi(model, X_test, df_test_pred, scaler, nom_columna='pred_iter'):
+def prediccio_step_iterativa_multi(model, X_test, df_test_pred, scaler, nom_columna='pred_iter', lookahead=0):
     """
     Fa una predicció multi-step iterativa (multi-output), reinjectant les prediccions com a nova entrada,
     i afegeix les prediccions desescalades directament a df_test_pred.
@@ -564,6 +581,7 @@ def prediccio_step_iterativa_multi(model, X_test, df_test_pred, scaler, nom_colu
         df_test_pred (pd.DataFrame): DataFrame amb la columna 'valor' desescalada. Es modifica in-place.
         scaler: MinMaxScaler ajustat sobre les dades de train.
         nom_columna (str): nom de la columna on s’enganxaran les prediccions (per defecte 'pred_iter').
+        lookahead (int): passos entre el final de la finestra i la primera predicció (per defecte 0).
 
     Returns:
         df_test_pred (DataFrame): amb la nova columna de predicció iterativa afegida.
@@ -590,7 +608,7 @@ def prediccio_step_iterativa_multi(model, X_test, df_test_pred, scaler, nom_colu
     y_pred_rescaled = scaler.inverse_transform(np.array(preds_scaled).reshape(-1, 1)).flatten()
 
     # Assignar les prediccions al DataFrame
-    idx_valid = df_test_pred.index[window_size:window_size + len(y_pred_rescaled)]
+    idx_valid = df_test_pred.index[window_size + lookahead : window_size + lookahead + len(y_pred_rescaled)]
     df_test_pred.loc[idx_valid, nom_columna] = y_pred_rescaled
 
     return df_test_pred
@@ -598,7 +616,7 @@ def prediccio_step_iterativa_multi(model, X_test, df_test_pred, scaler, nom_colu
 
 
 
-def prediccio_iterativa_reinjection_multi(model, X_test, df_test_pred, scaler, reinjeccio=5, nom_columna='pred_reinject'):
+def prediccio_iterativa_reinjection_multi(model, X_test, df_test_pred, scaler, reinjeccio=5, nom_columna='pred_reinject',lookahead=0):
     """
     Fa una predicció iterativa multi-output amb reinjecció de valors reals cada 'reinjeccio' passos.
     Afegeix les prediccions desescalades al df_test_pred.
@@ -646,7 +664,7 @@ def prediccio_iterativa_reinjection_multi(model, X_test, df_test_pred, scaler, r
 
     # Desescalar i inserir al DataFrame
     y_pred_rescaled = scaler.inverse_transform(np.array(preds_scaled).reshape(-1, 1)).flatten()
-    idx_valid = df_test_pred.index[window_size : window_size + len(y_pred_rescaled)]
+    idx_valid = df_test_pred.index[window_size + lookahead : window_size + lookahead + len(y_pred_rescaled)]
     df_test_pred.loc[idx_valid, nom_columna] = y_pred_rescaled
 
     return df_test_pred
@@ -658,7 +676,7 @@ def prediccio_iterativa_reinjection_multi(model, X_test, df_test_pred, scaler, r
 # ================================================================
 
 
-def calcular_metriques(df_test_pred, window_size , col_real='valor', col_preds=['pred_batch', 'pred_iter', 'pred_reinject']):
+def calcular_metriques(df_test_pred, col_real='valor', col_preds=['pred_batch', 'pred_iter', 'pred_reinject']):
     """
     Calcula RMSE, MSE i MAE per diferents columnes de predicció respecte a una columna real.
 
@@ -672,15 +690,19 @@ def calcular_metriques(df_test_pred, window_size , col_real='valor', col_preds=[
         pd.DataFrame: Taula amb RMSE, MSE i MAE per cada mètode de predicció.
     """
     metriques = {'Mètrica': ['RMSE', 'MSE', 'MAE']}
-    y_true = df_test_pred[col_real][window_size:]
 
+    # Iterem i calculem les mètriques per cada columna de predicció
     for col in col_preds:
 
+        # Comprovem que la columna de predicció existeixi
         if col not in df_test_pred.columns:
             print(f"⚠️ Avís: la columna '{col}' no existeix a df_test_pred. Es descarta.")
             continue
 
-        y_pred = df_test_pred[col][window_size:]
+        # Eliminem files amb NaNs (pot ser degut a window_size, lookahead, o prediccions incompletes)
+        df_valid = df_test_pred[[col_real, col]].dropna()
+        y_true = df_valid[col_real].values
+        y_pred = df_valid[col].values
 
         rmse = np.sqrt(mean_squared_error(y_true, y_pred))
         mse = mean_squared_error(y_true, y_pred)
@@ -689,44 +711,6 @@ def calcular_metriques(df_test_pred, window_size , col_real='valor', col_preds=[
 
     df_metriques = pd.DataFrame(metriques).set_index('Mètrica')
 
-    
-    return df_metriques.round(4)
-
-
-
-
-def calcular_metriques_multiout(df_test_pred, window_size, n_outputs, col_real='valor', col_preds=['pred_batch', 'pred_iter', 'pred_reinject']):
-    """
-    Calcula RMSE, MSE i MAE per diferents columnes de predicció respecte a una columna real.
-
-    Args:
-        df_test_pred (pd.DataFrame): DataFrame amb les columnes de valors reals i prediccions.
-        col_real (str): Nom de la columna amb els valors reals.
-        col_preds (list): Llista amb noms de les columnes de predicció.
-        window_size (int): Mida de la finestra per alinear les dades.
-
-    Returns:
-        pd.DataFrame: Taula amb RMSE, MSE i MAE per cada mètode de predicció.
-    """
-    metriques = {'Mètrica': ['RMSE', 'MSE', 'MAE']}
-    y_true = df_test_pred[col_real][window_size:(1-n_outputs)]
-
-    for col in col_preds:
-
-        if col not in df_test_pred.columns:
-            print(f"⚠️ Avís: la columna '{col}' no existeix a df_test_pred. Es descarta.")
-            continue
-
-        y_pred = df_test_pred[col][window_size:(1-n_outputs)]
-
-        rmse = np.sqrt(mean_squared_error(y_true, y_pred))
-        mse = mean_squared_error(y_true, y_pred)
-        mae = mean_absolute_error(y_true, y_pred)
-        metriques[col] = [rmse, mse, mae]
-
-    df_metriques = pd.DataFrame(metriques).set_index('Mètrica').round(4)
-
-    
     return df_metriques.round(4)
 
 
@@ -827,9 +811,6 @@ def plot_prediccions(
 
 
 
-
-
-
 # ============================================================================================
 # Funcions unificades per a la creació i entrenament del model LSTM i prediccions
 # Aquestes funcions encapsulen tot el procés de preparació de dades, entrenament i predicció
@@ -843,6 +824,7 @@ def deftrain_model_lstm(
     df_lstm,                 # DataFrame amb la columna 'valor' a escalar i utilitzar
     window_size=24,          # Mida de la finestra temporal (timesteps)
     n_outputs=1,             # Nombre de passos a predir (1 per regressió simple, >1 per multi-output)
+    lookahead=0,             # Passos entre el final de la finestra i la primera predicció (per defecte 0)
     n_layers=3,              # Nombre de capes LSTM
     n_units=64,              # Nombre de neurones per capa LSTM
     dropout_rate=0.2,        # Percentatge de dropout entre capes
@@ -886,9 +868,9 @@ def deftrain_model_lstm(
 
 
     # Crear seqüències per la LSTM
-    X_train, y_train = create_sequences(df_train['valor_scaled'].values, window_size, n_outputs, n_slide=n_outputs)
-    X_val, y_val = create_sequences(df_val['valor_scaled'].values, window_size, n_outputs, n_slide=n_outputs)
-    X_test, y_test = create_sequences(df_test['valor_scaled'].values, window_size, n_outputs, n_slide=n_outputs)
+    X_train, y_train = create_sequences(df_train['valor_scaled'].values, window_size=window_size, n_outputs=n_outputs, lookahead=lookahead, n_slide=n_outputs)
+    X_val, y_val = create_sequences(df_val['valor_scaled'].values, window_size=window_size, n_outputs=n_outputs, lookahead=lookahead ,n_slide=n_outputs)
+    X_test, y_test = create_sequences(df_test['valor_scaled'].values, window_size=window_size, n_outputs=n_outputs, lookahead=lookahead, n_slide=n_outputs)
 
 
 
@@ -925,6 +907,7 @@ def prediu_model_lstm(
     scaler,                                                     # MinMaxScaler utilitzat per desescalar les prediccions
     window_size,                                                # Mida de la finestra temporal
     n_outputs ,                                                 # Nombre de passos de predicció (1 per regressió simple, >1 per multi-output)
+    lookahead=0,                                               # Passos entre el final de la finestra i la primera predicció (per defecte 0)
     met_pred = ['pred_batch', 'pred_iter', 'pred_reinject']     # Metodes de predicció a utilitzar
 ):
     """
@@ -937,6 +920,8 @@ def prediu_model_lstm(
         scaler (MinMaxScaler): Escalador utilitzat per desescalar.
         window_size (int): Mida de finestra temporal.
         n_outputs (int): Nombre de passos de predicció.
+        lookahead (int): Passos entre el final de la finestra i la primera predicció.
+        met_pred (list): Llista de mètodes de predicció a utilitzar. Per defecte, inclou 'pred_batch', 'pred_iter' i 'pred_reinject'.
 
     Returns:
         df_test_pred (pd.DataFrame): Test amb prediccions.
@@ -951,37 +936,34 @@ def prediu_model_lstm(
     if n_outputs == 1:
 
         if 'pred_batch' in met_pred:
-            df_test_pred = prediccio_batch(model, X_test, df_test_pred, scaler)
+            print("Fent predicció batch...")
+            df_test_pred = prediccio_batch(model, X_test, df_test_pred, scaler,lookahead=lookahead)
         
         if 'pred_iter' in met_pred:
-            df_test_pred = prediccio_step_iterativa(model, X_test, df_test_pred, scaler)
+            print("Fent predicció iterativa...")
+            df_test_pred = prediccio_step_iterativa(model, X_test, df_test_pred, scaler,lookahead=lookahead)
 
         if 'pred_reinject' in met_pred:
-            df_test_pred = prediccio_iterativa_reinjection(model, X_test, df_test_pred, scaler)
+            print("Fent predicció iterativa amb reinjecció...")
+            df_test_pred = prediccio_iterativa_reinjection(model, X_test, df_test_pred, scaler,lookahead=lookahead)
 
 
-        # Calcular mètriques per a les prediccions
-        metriques = calcular_metriques(df_test_pred, col_real='valor',
-                                        col_preds=met_pred,
-                                        window_size=window_size)
     else:
+        print("Fent predicció batch multi-output...")
         df_test_pred = prediccio_batch_multi(model, X_test, df_test_pred, scaler,
                                              window_size=window_size, 
-                                             n_outputs=n_outputs)
+                                             n_outputs=n_outputs,
+                                             lookahead=lookahead)
 
-        metriques = calcular_metriques_multiout(df_test_pred, col_real='valor',
-                                                col_preds=['pred_batch'],
-                                                window_size=window_size,
-                                                n_outputs=n_outputs)
-
-
+        
+   
+    # Calcular mètriques per a les prediccions
+    metriques = calcular_metriques(df_test_pred, col_real='valor',
+                                    col_preds=met_pred)
+        
 
     # Retornar el DataFrame de test amb les prediccions i el dataframe de mètriques
     return df_test_pred, metriques
-
-
-
-
 
 
 
@@ -993,6 +975,7 @@ def pipeline_lstm(
     df_lstm,
     window_size=24,
     n_outputs=1,
+    lookahead=0,
     n_layers=3,
     n_units=64,
     dropout_rate=0.2,
@@ -1005,7 +988,7 @@ def pipeline_lstm(
     seed=42,
     dies_train=0,
     mostrar_val=False,
-    col_preds=None,
+    col_preds=['pred_batch', 'pred_iter', 'pred_reinject'],
     save_path=None,
     show=True,
     summary=True
@@ -1035,6 +1018,7 @@ def pipeline_lstm(
         df_lstm=df_lstm,
         window_size=window_size,
         n_outputs=n_outputs,
+        lookahead=lookahead,
         n_layers=n_layers,
         n_units=n_units,
         dropout_rate=dropout_rate,
@@ -1056,6 +1040,9 @@ def pipeline_lstm(
         pd.DataFrame(history.history).to_csv(os.path.join(save_path, "loss_history.csv"))
         fig_loss_train.savefig(os.path.join(save_path, "loss_plot.png"))
 
+    else:
+        print("📂 [2/5] Model entrenat")
+
     print("🔮 [3/5] Fent prediccions...")
 
     df_test_pred, metriques = prediu_model_lstm(
@@ -1064,7 +1051,8 @@ def pipeline_lstm(
         df_test=df_test,
         scaler=scaler,
         window_size=window_size,
-        n_outputs=n_outputs
+        n_outputs=n_outputs,
+        lookahead=lookahead,
     )
 
     print("📊 [4/5] Generant gràfic de prediccions...")
@@ -1080,20 +1068,27 @@ def pipeline_lstm(
         show=show
     )
 
+    # Mostrar les metriques calculades
+    print("\n📈 Mètriques calculades:")
+    print(metriques)
+
+
     if save_path:
         print("🗃️ [5/5] Guardant prediccions, mètriques i configuració...")
+        
         df_test_pred.to_csv(os.path.join(save_path, "prediccions.csv"), index=False)
         metriques.to_csv(os.path.join(save_path, "metrics.csv"))
 
-        with open(os.path.join(save_path, "metrics.txt"), "w") as f:
-            for col in metriques.columns:
-                f.write(f"{col}: {metriques[col].values[0]:.4f}\n")
+        # Guardar les mètriques com si fos un CSV però en fitxer .txt
+        metriques.to_csv(os.path.join(save_path, "metrics.txt"))
+
 
         fig.savefig(os.path.join(save_path, "plot.png"))
 
         config = {
             'window_size': window_size,
             'n_outputs': n_outputs,
+            'lookahead': lookahead,
             'n_layers': n_layers,
             'n_units': n_units,
             'dropout_rate': dropout_rate,
@@ -1109,12 +1104,20 @@ def pipeline_lstm(
         with open(os.path.join(save_path, "config.json"), "w") as f:
             json.dump(config, f, indent=2)
 
+    else:
+        print("📂 [5/5] Pipeline completada sense guardar resultats.")
+
     return model, scaler, df_train, df_val, df_test_pred, history, metriques, fig, fig_loss_train
 
 
+
+
+
+
 # ===============================================================
-# WRAPPERS D'ENTRENAMENT I EXECUCIÓ D'EXPERIMENTS
+# FUNCIÓ PER CONSTRUIR NOM D'EXPERIMENT
 # ===============================================================
+
 
 def construir_nom_experiment(params: dict, prefix="exp"):
     """
@@ -1123,6 +1126,7 @@ def construir_nom_experiment(params: dict, prefix="exp"):
     parts = [
         f"win{params.get('window_size', 24)}",
         f"out{params.get('n_outputs', 1)}",
+        f"look{params.get('lookahead', 0)}",
         f"lay{params.get('n_layers', 2)}",
         f"uni{params.get('n_units', 64)}",
         f"drop{int(params.get('dropout_rate', 0.2) * 100)}"
@@ -1132,6 +1136,12 @@ def construir_nom_experiment(params: dict, prefix="exp"):
 
 
 
+
+
+
+# ===============================================================
+# WRAPPERS D'ENTRENAMENT I EXECUCIÓ D'EXPERIMENTS
+# ===============================================================
 
 
 def executar_experiment(
@@ -1146,13 +1156,14 @@ def executar_experiment(
     Wrapper per executar un experiment amb la pipeline LSTM i guardar-ne els resultats.
 
     Args:
-        df (pd.DataFrame): DataFrame amb les dades originals
-        params (dict): Diccionari amb hiperparàmetres de l'experiment
-        save_path (str, optional): Ruta per guardar els resultats
-        col_preds (list): Columnes de predicció a mostrar al gràfic
-        dies_train (int): Dies finals de train a mostrar (si escau)
-        mostrar_val (bool): Si s'ha de mostrar també la validació
+        df (pd.DataFrame): DataFrame amb les dades originals.
+        params (dict): Diccionari amb hiperparàmetres de l'experiment.
+        save_path (str, optional): Ruta per guardar els resultats.
+        col_preds (list): Columnes de predicció a mostrar o guardar.
+        dies_train (int): Dies finals de train a mostrar (si escau).
+        mostrar_val (bool): Si s'ha de mostrar també la validació.
     """
+
 
     if save_path is None:
         nom = construir_nom_experiment(params)
@@ -1162,7 +1173,8 @@ def executar_experiment(
         df_lstm=df,
         window_size=params.get('window_size', 24),
         n_outputs=params.get('n_outputs', 1),
-        n_layers=params.get('n_layers', 2),
+        lookahead=params.get('lookahead', 0),
+        n_layers=params.get('n_layers', 3),
         n_units=params.get('n_units', 64),
         dropout_rate=params.get('dropout_rate', 0.2),
         optimizer=params.get('optimizer', 'adam'),
@@ -1176,10 +1188,9 @@ def executar_experiment(
         mostrar_val=mostrar_val,
         col_preds=col_preds,
         save_path=save_path,
-        summary =False,          # ❌ Desactiva el resum del model al fer experiments massius
-        show=False              # ❌ Desactiva el plot interactiu al fer experiments massius
+        summary=False,         # ❌ Desactiva el resum del model al fer experiments massius
+        show=False             # ❌ Desactiva el plot interactiu al fer experiments massius
     )
-
 
 
 

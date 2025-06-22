@@ -1,0 +1,14 @@
+{
+  "window_size": 72,
+  "n_outputs": 1,
+  "n_layers": 3,
+  "n_units": 128,
+  "dropout_rate": 0.2,
+  "optimizer": "adam",
+  "loss": "mse",
+  "epochs": 50,
+  "batch_size": 128,
+  "patience": 5,
+  "shuffle": false,
+  "seed": 42
+}
