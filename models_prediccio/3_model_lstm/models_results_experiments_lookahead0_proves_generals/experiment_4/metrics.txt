@@ -1,0 +1,4 @@
+Mètrica,pred_batch
+RMSE,1.6055
+MSE,2.5777
+MAE,1.1586

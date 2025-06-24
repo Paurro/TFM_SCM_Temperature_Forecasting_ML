@@ -1,15 +1,16 @@
+
 {
-  "save_dir": "models_results_experiments_lookahead12",
-  "assignacio_num": false,      
+  "save_dir": "models_results_expeririments_alt_ws",
+  "assignacio_num": false,
 
-  "WINDOW_SIZE": [24, 24, 48, 72, 48, 96],
-  "N_OUTPUTS": [1, 1, 1, 1, 6, 12],
-  "N_LAYERS": [1, 1, 2, 3, 2, 3],
-  "N_UNITS": [1, 32, 64, 128, 64, 128],
+  "WINDOW_SIZE": [24, 24, 48, 72, 96, 96, 24, 24, 120, 144, 168, 192, 96, 120, 144, 168, 192, 96, 120, 144, 168, 192],
+  "N_OUTPUTS":   [1,  1,  1,  1,  6, 12, 1,  6, 6,   6,   12,  12, 1,  1,   1,   1,   1,  1,  1,   1,   1,   1],
+  "N_LAYERS":    [1,  2,  2,  3,  2,  3, 3,  3, 2,   2,   3,   3,  2,  2,   2,   2,   2,  3,  3,   3,   3,   3],
+  "N_UNITS":     [32, 64, 64, 128, 64, 128, 32, 64, 64,  64,  128, 128, 64, 64,  64,  64,  64, 64, 64,  64,  64, 64],
 
-  "LOOKAHEAD": 12,
+  "LOOKAHEAD": 0,
   "DROPOUT_RATE": 0.2,
-  "BATCH_SIZE": 128,
+  "BATCH_SIZE": 256,
   "EPOCHS": 50,
   "PATIENCE": 5,
   "SEED": 42,

@@ -416,7 +416,6 @@ def prediccio_batch(model, X_test, df_test_pred, scaler, nom_columna='pred_batch
 
 
 
-
 def prediccio_step_iterativa(model, X_test, df_test_pred, scaler, nom_columna='pred_iter', lookahead=0):
     """
     Fa una predicció multi-step iterativa, reinjectant cada predicció com a nou input,
@@ -615,7 +614,6 @@ def prediccio_step_iterativa_multi(model, X_test, df_test_pred, scaler, nom_colu
 
 
 
-
 def prediccio_iterativa_reinjection_multi(model, X_test, df_test_pred, scaler, reinjeccio=5, nom_columna='pred_reinject',lookahead=0):
     """
     Fa una predicció iterativa multi-output amb reinjecció de valors reals cada 'reinjeccio' passos.
@@ -810,7 +808,6 @@ def plot_prediccions(
 
 
 
-
 # ============================================================================================
 # Funcions unificades per a la creació i entrenament del model LSTM i prediccions
 # Aquestes funcions encapsulen tot el procés de preparació de dades, entrenament i predicció
@@ -967,6 +964,7 @@ def prediu_model_lstm(
 
 
 
+
 # ============================================================================================================
 # Pipeline que unifica les funcions de creació, entrenament i predicció, amb opcions de plot i guardat
 # ============================================================================================================
@@ -1053,6 +1051,7 @@ def pipeline_lstm(
         window_size=window_size,
         n_outputs=n_outputs,
         lookahead=lookahead,
+        met_pred=col_preds
     )
 
     print("📊 [4/5] Generant gràfic de prediccions...")
@@ -1108,8 +1107,6 @@ def pipeline_lstm(
         print("📂 [5/5] Pipeline completada sense guardar resultats.")
 
     return model, scaler, df_train, df_val, df_test_pred, history, metriques, fig, fig_loss_train
-
-
 
 
 
