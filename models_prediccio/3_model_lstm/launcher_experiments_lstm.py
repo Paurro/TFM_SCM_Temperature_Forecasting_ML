@@ -4,21 +4,14 @@ import pandas as pd
 from lstm_functions import executar_experiment, construir_nom_experiment
 import sys
 
-
-
-# -------------------------# 
-# 📂 0. Importar mòduls 
 # -------------------------
-# Permet passar el nom del fitxer de configuració com a argument
+# 📂 0. Llegir fitxer de configuració
 config_path = sys.argv[1] if len(sys.argv) > 1 else "params_experiment.json"
-with open(config_path) as f:
+with open(config_path, "r", encoding="utf-8") as f:
     config = json.load(f)
-
-
 
 # -------------------------
 # 📂 1. Carregar dades
-# -------------------------
 __path__ = os.getcwd()
 carpeta_dades = '../0_Data/Dades_T_estacions_xema_Z1'
 fitxer_dades = 'SCM_T_Z1_2020_2024.csv'
@@ -27,25 +20,17 @@ path_dades = os.path.join(__path__, carpeta_dades, fitxer_dades)
 df_lstm = pd.read_csv(path_dades)
 df_lstm['data'] = pd.to_datetime(df_lstm['data'], utc=True)
 
-
 # -------------------------
-# ⚙️ 2. Carregar configuració
-# -------------------------
-with open("params_experiment.json") as f:
-    config = json.load(f)
-
+# ⚙️ 2. Paràmetres globals
 save_dir = config.get("save_dir", "resultats")
 assignacio_num = config.get("assignacio_num", True)
 
-
 # -------------------------
 # 🧪 3. Construir experiments
-# -------------------------
 if "experiments" in config:
     experiments_list = config["experiments"]
 else:
-    # Generar experiments a partir de llistes paral·leles
-    n_experiments = len(config["WINDOW_SIZE"])  # Es pressuposa mateixa mida a totes
+    n_experiments = len(config["WINDOW_SIZE"])
 
     experiments_list = []
     for i in range(n_experiments):
@@ -64,10 +49,8 @@ else:
         }
         experiments_list.append(exp)
 
-
 # -------------------------
-# 🚀 4. Lançar experiments
-# -------------------------
+# 🚀 4. Llançar experiments
 for i, params in enumerate(experiments_list):
     if assignacio_num:
         nom_experiment = f"experiment_{i}"

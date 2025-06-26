@@ -1,0 +1,18 @@
+{
+  "save_dir": "resultats_finals/serie_A",
+  "assignacio_num": false,
+
+  "WINDOW_SIZE": [96, 96, 96],
+  "N_OUTPUTS":   [1,  1,  1],
+  "N_LAYERS":    [1,  2,  3],
+  "N_UNITS":     [64, 64, 64],
+
+  "LOOKAHEAD": 0,
+  "DROPOUT_RATE": 0.2,
+  "BATCH_SIZE": 256,
+  "EPOCHS": 50,
+  "PATIENCE": 5,
+  "SEED": 42,
+
+  "PREDICTIONS_MOD": ["pred_batch", "pred_reinject"]
+}
