@@ -5,6 +5,16 @@ import sys
 
 from arima_functions import executar_experiment_arima, construir_nom_experiment_arima
 
+
+# import warnings
+# from statsmodels.tools.sm_exceptions import ConvergenceWarning
+
+# # Silenciar warnings concrets
+# warnings.filterwarnings("ignore", category=UserWarning)
+# warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+
+
 # -------------------------#
 # 📂 0. Llegir fitxer de configuració
 # -------------------------
@@ -33,30 +43,34 @@ rolling = config.get("rolling", False)
 # -------------------------#
 # 🧪 3. Construir experiments
 # -------------------------
-if "experiments" in config:
-    experiments_list = config["experiments"]
-else:
-    n_experiments = len(config["p"])  # mateixa mida per p, d, q
+# if "experiments" in config:
+#     experiments_list = config["experiments"]
+# else:
+#     n_experiments = len(config["p"])  # mateixa mida per p, d, q
 
-    experiments_list = []
-    for i in range(n_experiments):
-        exp = {
-            "data_inici_pred": config["data_inici_pred"][i],
-            "data_final_pred": config.get("data_final_pred", [None]*n_experiments)[i],
-            "dies_entrenament": config["dies_entrenament"][i],
-            "p": config["p"][i],
-            "d": config["d"][i],
-            "q": config["q"][i],
-            "P": config.get("P", [None]*n_experiments)[i],
-            "D": config.get("D", [None]*n_experiments)[i],
-            "Q": config.get("Q", [None]*n_experiments)[i],
-            "s": config.get("s", [None]*n_experiments)[i],
-            "rolling": rolling,
-            "n_hores": config.get("n_hores", [None]*n_experiments)[i],
-            "pas_pred": config.get("pas_pred", [1]*n_experiments)[i],
-            "plot_dies_ant": config.get("plot_dies_ant", 0)
-        }
-        experiments_list.append(exp)
+#     experiments_list = []
+#     for i in range(n_experiments):
+#         exp = {
+#             "id": config.get("id", [None]*n_experiments)[i],
+#             "data_inici_pred": config["data_inici_pred"][i],
+#             "data_final_pred": config.get("data_final_pred", [None]*n_experiments)[i],
+#             "dies_entrenament": config["dies_entrenament"][i],
+#             "p": config["p"][i],
+#             "d": config["d"][i],
+#             "q": config["q"][i],
+#             "P": config.get("P", [None]*n_experiments)[i],
+#             "D": config.get("D", [None]*n_experiments)[i],
+#             "Q": config.get("Q", [None]*n_experiments)[i],
+#             "s": config.get("s", [None]*n_experiments)[i],
+#             "rolling": rolling,
+#             "n_passos": config.get("n_passos", [None]*n_experiments)[i],
+#             "pas_pred": config.get("pas_pred", [1]*n_experiments)[i],
+#             "plot_dies_ant": config.get("plot_dies_ant", 0)
+#         }
+#         experiments_list.append(exp)
+
+experiments_list = config["experiments"]
+
 
 # -------------------------#
 # 🚀 4. Lançar experiments

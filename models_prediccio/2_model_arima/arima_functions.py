@@ -166,11 +166,9 @@ def prediccio_arima(df_test, model_fit, n_passos=None,verbose=False):
         n_passos = len(df_pred)
 
     forecast = model_fit.forecast(steps=n_passos)
-
-    df_pred = df_pred.iloc[:n_passos].copy()
+    forecast.reset_index(drop=True, inplace=True)
     df_pred['forecast'] = forecast
-    # df_pred['forecast'] = np.squeeze(forecast)
-
+    
 
     if verbose:
         print("🔹 Predicció ARIMA:")
@@ -283,7 +281,7 @@ def pipeline_arima(
     dies_entrenament=60,
     p=1, d=1, q=1,
     P=None, D=None, Q=None, s=None,
-    n_passos=24,
+    n_passos=None,
     plot_dies_ant=0,
     verbose=True,
     save_path=None,
@@ -367,23 +365,22 @@ def pipeline_arima(
     if save_path:
         if verbose: print("💾 Guardant resultats a disc...")
         os.makedirs(save_path, exist_ok=True)
-
-
-        # Guardar el model entrenat
+      
+         # Guardar el model entrenat
         model_fit.save(os.path.join(save_path, "model.pkl"))
-
+        
         # Guardar els DataFrames i mètriques
         df_pred.to_csv(os.path.join(save_path, "prediccions.csv"), index=False)
         df_train.to_csv(os.path.join(save_path, "train.csv"), index=False)
-
+        
         # Guardar les mètriques en format CSV i TXT
         metrics.to_csv(os.path.join(save_path, "metrics.csv"), index=False)
         metrics.to_csv(os.path.join(save_path, "metrics.txt"), index=False)
-
+        
 
         # Guardar el gràfic
         fig.savefig(os.path.join(save_path, "plot.png"))
-
+        
         config = {
             'data_inici_pred': str(data_inici_pred),
             'data_final_pred': str(data_final_pred),
@@ -393,7 +390,7 @@ def pipeline_arima(
         }
         with open(os.path.join(save_path, "config.json"), "w") as f:
             json.dump(config, f, indent=2)
-
+        
     else:
         if verbose: print("📂 Pipeline completada sense guardar resultats.")
 
@@ -533,7 +530,6 @@ def pipeline_rolling_forecast_arima(
 # ===============================================================================
 # Funcions per construir noms d'experiment ARIMA/SARIMA
 # ===============================================================================
-
 def construir_nom_experiment_arima(params: dict, prefix=""):
     """
     Construeix un nom d'experiment únic a partir dels hiperparàmetres ARIMA/SARIMA.
@@ -542,17 +538,31 @@ def construir_nom_experiment_arima(params: dict, prefix=""):
     parts = []
 
     if prefix:
-        parts.append(prefix)
+        parts.append(str(prefix))
 
-    parts.append(f"p{params.get('p', 1)}d{params.get('d', 1)}q{params.get('q', 1)}")
+    # Paràmetres ARIMA
+    p = params.get('p', 1)
+    d = params.get('d', 1)
+    q = params.get('q', 1)
+    parts.append(f"p{p}d{d}q{q}")
 
-    if all(k in params for k in ['P', 'D', 'Q', 's']) and params['P'] is not None:
-        parts.append(f"P{params['P']}D{params['D']}Q{params['Q']}s{params['s']}")
+    # Paràmetres SARIMA (si existeixen i tenen valor)
+    P = params.get('P')
+    D = params.get('D')
+    Q = params.get('Q')
+    s = params.get('s')
 
+    if None not in (P, D, Q, s):
+        parts.append(f"P{P}D{D}Q{Q}s{s}")
+
+    # Rolling forecast
     if params.get('rolling', False):
-        parts.append(f"roll{params.get('pas_pred', 1)}")
+        pas_pred = params.get('pas_pred', 1)
+        parts.append(f"roll{pas_pred}")
 
-    parts.append(f"tr{params.get('dies_entrenament', 60)}")
+    # Finestra d'entrenament
+    tr = params.get('dies_entrenament', 60)
+    parts.append(f"tr{tr}")
 
     return "_".join(parts)
 
@@ -576,12 +586,21 @@ def executar_experiment_arima(
         save_root (str): Carpeta on guardar resultats.
     """
 
+
+    import warnings
+    from statsmodels.tools.sm_exceptions import ConvergenceWarning
+
+    # Silenciar warnings concrets
+    warnings.filterwarnings("ignore", category=UserWarning)
+    warnings.filterwarnings("ignore", category=ConvergenceWarning)
+
+
     # Comprovació bàsica
     if 'data_inici_pred' not in params:
         raise ValueError("⚠️ Falta el paràmetre obligatori 'data_inici_pred'")
 
     # Ruta de guardat
-    nom_exp = construir_nom_experiment_arima(params)
+    nom_exp = construir_nom_experiment_arima(params, prefix=params.get('id', ''))
     save_path = os.path.join(save_root, nom_exp)
 
     # Evita repetir si ja està fet
@@ -589,7 +608,7 @@ def executar_experiment_arima(
         print(f"❌ Ja existeix: {nom_exp}")
         return
 
-    print(f"🚀 Executant experiment: {nom_exp}")
+    # print(f"🚀 Executant experiment: {nom_exp}") # (Ho comentem perq sino es mostra doble ja que tmb esta al launcher)
 
     # Rolling Forecast
     if params.get('rolling', False):
@@ -609,7 +628,7 @@ def executar_experiment_arima(
             pas_pred=params.get('pas_pred', 1),
             plot_dies_ant=params.get('plot_dies_ant', 0),
             save_path=save_path,
-            verbose=False,
+            verbose=True,
             show=False
         )
 
@@ -630,7 +649,7 @@ def executar_experiment_arima(
             s=params.get('s'),
             plot_dies_ant=params.get('plot_dies_ant', 0),
             save_path=save_path,
-            verbose=False,
+            verbose=True,
             show=False
         )
 
