@@ -1,5 +1,5 @@
 {
-    "save_dir": "resultats_arima_final",
+    "save_dir": "resultats_arima_final_v2",
     "assignacio_num": false,
     "experiments": [
         {
@@ -12,11 +12,11 @@
             "Q": 0,
             "s": 24,
             "dies_entrenament": 60,
-            "rolling": false,
+            "rolling": true,
             "data_inici_pred": "2024-10-01 00:00:00",
-            "data_final_pred": null,
-            "n_passos": null,
-            "pas_pred": 1,
+            "data_final_pred": "2024-11-01 00:00:00",
+            "n_passos": 744,
+            "pas_pred": 5,
             "plot_dies_ant": 0
         },
         {
@@ -29,11 +29,11 @@
             "Q": 0,
             "s": 24,
             "dies_entrenament": 60,
-            "rolling": false,
+            "rolling": true,
             "data_inici_pred": "2024-10-01 00:00:00",
-            "data_final_pred": null,
-            "n_passos": null,
-            "pas_pred": 1,
+            "data_final_pred": "2024-11-01 00:00:00",
+            "n_passos": 744,
+            "pas_pred": 5,
             "plot_dies_ant": 0
         },
         {
@@ -46,11 +46,11 @@
             "Q": 0,
             "s": 24,
             "dies_entrenament": 60,
-            "rolling": false,
+            "rolling": true,
             "data_inici_pred": "2024-10-01 00:00:00",
-            "data_final_pred": null,
-            "n_passos": null,
-            "pas_pred": 1,
+            "data_final_pred": "2024-11-01 00:00:00",
+            "n_passos": 744,
+            "pas_pred": 5,
             "plot_dies_ant": 0
         },
         {
@@ -65,8 +65,8 @@
             "dies_entrenament": 30,
             "rolling": true,
             "data_inici_pred": "2024-10-01 00:00:00",
-            "data_final_pred": null,
-            "n_passos": null,
+            "data_final_pred": "2024-11-01 00:00:00",
+            "n_passos": 744,
             "pas_pred": 5,
             "plot_dies_ant": 0
         },
@@ -82,8 +82,8 @@
             "dies_entrenament": 90,
             "rolling": true,
             "data_inici_pred": "2024-10-01 00:00:00",
-            "data_final_pred": null,
-            "n_passos": null,
+            "data_final_pred": "2024-11-01 00:00:00",
+            "n_passos": 744,
             "pas_pred": 5,
             "plot_dies_ant": 0
         },
@@ -97,11 +97,11 @@
             "Q": 1,
             "s": 24,
             "dies_entrenament": 60,
-            "rolling": false,
+            "rolling": true,
             "data_inici_pred": "2024-10-01 00:00:00",
-            "data_final_pred": null,
-            "n_passos": null,
-            "pas_pred": 1,
+            "data_final_pred": "2024-11-01 00:00:00",
+            "n_passos": 744,
+            "pas_pred": 5,
             "plot_dies_ant": 0
         },
         {
@@ -114,11 +114,11 @@
             "Q": 2,
             "s": 24,
             "dies_entrenament": 60,
-            "rolling": false,
+            "rolling": true,
             "data_inici_pred": "2024-10-01 00:00:00",
-            "data_final_pred": null,
-            "n_passos": null,
-            "pas_pred": 1,
+            "data_final_pred": "2024-11-01 00:00:00",
+            "n_passos": 744,
+            "pas_pred": 5,
             "plot_dies_ant": 0
         },
         {
@@ -133,8 +133,8 @@
             "dies_entrenament": 30,
             "rolling": true,
             "data_inici_pred": "2024-10-01 00:00:00",
-            "data_final_pred": null,
-            "n_passos": null,
+            "data_final_pred": "2024-11-01 00:00:00",
+            "n_passos": 744,
             "pas_pred": 5,
             "plot_dies_ant": 0
         },
@@ -150,8 +150,8 @@
             "dies_entrenament": 60,
             "rolling": true,
             "data_inici_pred": "2024-10-01 00:00:00",
-            "data_final_pred": null,
-            "n_passos": null,
+            "data_final_pred": "2024-11-01 00:00:00",
+            "n_passos": 744,
             "pas_pred": 5,
             "plot_dies_ant": 0
         },
@@ -167,8 +167,8 @@
             "dies_entrenament": 90,
             "rolling": true,
             "data_inici_pred": "2024-10-01 00:00:00",
-            "data_final_pred": null,
-            "n_passos": null,
+            "data_final_pred": "2024-11-01 00:00:00",
+            "n_passos": 744,
             "pas_pred": 5,
             "plot_dies_ant": 0
         }
