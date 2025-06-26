@@ -166,8 +166,10 @@ def prediccio_arima(df_test, model_fit, n_passos=None,verbose=False):
         n_passos = len(df_pred)
 
     forecast = model_fit.forecast(steps=n_passos)
+
     df_pred = df_pred.iloc[:n_passos].copy()
-    df_pred['forecast'] = forecast.values
+    df_pred['forecast'] = forecast
+    # df_pred['forecast'] = np.squeeze(forecast)
 
 
     if verbose:
@@ -199,7 +201,7 @@ def calcular_metriques_arima(df_pred, col_real='valor', col_pred='forecast', ver
     df = df_pred[[col_real, col_pred]].dropna()
     y_true = df[col_real].values
     y_pred = df[col_pred].values
-
+    
     rmse = np.sqrt(mean_squared_error(y_true, y_pred))
     mse = mean_squared_error(y_true, y_pred)
     mae = mean_absolute_error(y_true, y_pred)
@@ -375,8 +377,9 @@ def pipeline_arima(
         df_train.to_csv(os.path.join(save_path, "train.csv"), index=False)
 
         # Guardar les mètriques en format CSV i TXT
-        pd.DataFrame([metrics]).to_csv(os.path.join(save_path, "metrics.csv"), index=False)
-        pd.DataFrame([metrics]).to_csv(os.path.join(save_path, "metrics.txt"), index=False)
+        metrics.to_csv(os.path.join(save_path, "metrics.csv"), index=False)
+        metrics.to_csv(os.path.join(save_path, "metrics.txt"), index=False)
+
 
         # Guardar el gràfic
         fig.savefig(os.path.join(save_path, "plot.png"))
@@ -501,8 +504,9 @@ def pipeline_rolling_forecast_arima(
             print("💾 [4/4] Guardant resultats...")
         os.makedirs(save_path, exist_ok=True)
         df_pred.to_csv(os.path.join(save_path, "prediccions.csv"), index=False)
-        pd.DataFrame([metrics]).to_csv(os.path.join(save_path, "metrics.csv"), index=False)
-        pd.DataFrame([metrics]).to_csv(os.path.join(save_path, "metrics.txt"), index=False)
+        metrics.to_csv(os.path.join(save_path, "metrics.csv"), index=False)
+        metrics.to_csv(os.path.join(save_path, "metrics.txt"), index=False)
+
         fig.savefig(os.path.join(save_path, "plot.png"))
 
         config = {
@@ -526,7 +530,9 @@ def pipeline_rolling_forecast_arima(
 
 
 
-import os
+# ===============================================================================
+# Funcions per construir noms d'experiment ARIMA/SARIMA
+# ===============================================================================
 
 def construir_nom_experiment_arima(params: dict, prefix=""):
     """

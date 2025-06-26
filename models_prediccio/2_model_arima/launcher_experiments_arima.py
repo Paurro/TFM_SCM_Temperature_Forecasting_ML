@@ -82,3 +82,4 @@ for i, params in enumerate(experiments_list):
 
     except Exception as e:
         print(f"⚠️  ERROR a l'experiment {nom_experiment}: {e}")
+
