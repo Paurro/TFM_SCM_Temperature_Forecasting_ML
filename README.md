@@ -1,33 +1,37 @@
-# TFM_SCM_Temperature_Forecasting_ML
-TFM de predicció de temperatura a curt termini utilitzant models de Machine Learning
+# TFM - Predicció de temperatura a curt termini amb *Machine Learning*
 
-# Predicció de temperatura a curt termini amb models seqüencials
-Aquest repositori recull el codi font, dades i figures associades al **Treball de Fi de Màster (TFM)** de Pau Rodrigo:  
-**"Predicció de temperatura a curt termini amb xarxes neuronals LSTM"**  
-realitzat en col·laboració amb el Servei Meteorològic de Catalunya (SMC) dins la línia de Recerca Aplicada i Modelització (RAM).
+Aquest repositori conté el codi, les dades i la memòria del **Treball de Fi de Màster (TFM)** de **Pau Rodrigo Parés**, titulat:  
+**"Predicció de temperatura a curt termini amb xarxes neuronals LSTM"**
+
+El projecte s’ha realitzat dins la línia de **Recerca Aplicada i Modelització (RAM)** del **Servei Meteorològic de Catalunya (SMC)** i el **Màster en Modelització per a la Ciència i l’Enginyeria** de la **Universitat Autònoma de Barcelona (UAB)**.
 
 ## 🧠 Objectiu del projecte
 
-Explorar i comparar diferents mètodes per a la predicció horària de temperatura a curt termini mitjançant:
+Aquest projecte analitzar la viabilitat de models de *machine learning* i, explora i compara diferents tècniques per a la predicció horària de la temperatura a curt termini:
 
-- Xarxes neuronals LSTM (Long Short-Term Memory)
-- Models estadístics clàssics ARIMA i SARIMA
-- Cadenes de Markov per predicció qualitativa de precipitació
+- 🌧️ **Models probabilístics**: Cadenes de Markov per a precipitació
+- 📊 **Models estadístics**: ARIMA i SARIMA
+- 🧠 **Models de Deep Learning**: Xarxes LSTM (*Long Short-Term Memory*)
 
-Els models han estat entrenats amb dades reals de l’estació meteorològica de la Bonaigua (XEMA) entre 1998 i 2024.
+Les dades provenen de l’estació meteorològica de **la Bonaigua (XEMA)**, i cobreixen el període 1998–2024.
 
 ## 📁 Estructura del repositori
 
 ```
 TFM_SCM_Temperature_Forecasting_ML/
-├── Bibliografia/           # Articles científics consultats (PDFs)
-├── Experiments/            # Notebooks d’experiments per model
-├── Figures/                # Gràfics i figures generades pel TFM
-├── Scripts/                # Funcions Python utilitzades als notebooks
-├── Data/                   # Dades d’entrada (temperatura, precipitació…)
-├── requirements.txt        # Llista de paquets per a reproducció
-├── environment.yml         # Fitxer d’entorn per Conda
-└── README.md               # Aquest fitxer
+│
+├── environment.yml              # Entorn Conda amb totes les dependències
+├── requirements.txt             # Alternativa amb pip
+│
+├── models_prediccio/
+│   ├── 0_Data/                  # Dades originals i pre-processades
+│   ├── 1_model_markov/          # Model de cadenes de Markov
+│   ├── 2_model_arima/           # Models ARIMA i SARIMA
+│   └── 3_model_lstm/            # Xarxes LSTM i experiments
+│
+├── Bibliografia/                # Articles científics consultats (PDFs)
+├── TFM_PauRodrigo_*.pdf         # Memòria final del treball
+└── README.md                    # Aquest fitxer
 ```
 
 ## 🛠️ Llibreries principals
@@ -36,24 +40,38 @@ TFM_SCM_Temperature_Forecasting_ML/
 - `scikit-learn`, `statsmodels`, `tensorflow`, `keras`
 - `joblib`, `plotly`, `tqdm`
 
-## 📦 Entorn recomanat
+## ⚙️ Com executar-ho
 
-Per garantir la reproducció dels experiments, pots crear un entorn Conda:
+Per garantir la reproducció dels experiments:
 
 ```bash
 conda env create -f environment.yml
-conda activate TFM_venv
+conda activate tfm-forecast
 ```
 
-## 🚀 Execució dels experiments
+## 🚀 Experiments i notebooks
 
-Els notebooks es troben dins la carpeta `Experiments/` i estan agrupats per model. Cada un inclou:
+Els notebooks Jupyter es troben a `models_prediccio/`, agrupats per model. Cada un inclou:
 
 - Preprocessament i preparació de dades
-- Entrenament i predicció
-- Avaluació amb mètriques (RMSE, MAE, etc.)
-- Visualització dels resultats
+- Entrenament i generació de prediccions
+- Càlcul de mètriques (RMSE, MAE, etc.)
+- Gràfics comparatius de resultats
+
+Els scripts `.py` modularitzen la pipeline per facilitar l’execució i reutilització.
+
+## 📄 Memòria del TFM
+
+La memòria completa es troba al fitxer:
+
+```
+TFM_PauRodrigo_Temperature_Forecasting_ML_SCM.pdf
+```
+
+## 📚 Bibliografia
+
+Els articles de referència utilitzats estan disponibles a la carpeta `Bibliografia/`.
 
 ## 📜 Crèdits
 
-Aquest treball ha estat desenvolupat per **Pau Rodrigo** durant el Màster en Modelització per a la Ciència i l'Enginyeria (UAB), amb suport del **Servei Meteorològic de Catalunya (SMC)**.
+Treball desenvolupat per **Pau Rodrigo Parés**, amb la supervisió del **Servei Meteorològic de Catalunya (SMC)** durant el curs 2024–2025, dins del **Màster en Modelització per a la Ciència i l'Enginyeria** (UAB).
