@@ -1,7 +1,7 @@
 # TFM - Predicció de temperatura a curt termini amb *Machine Learning*
 
 Aquest repositori conté el codi, les dades i la memòria del **Treball de Fi de Màster (TFM)** de **Pau Rodrigo Parés**, titulat:  
-**"Predicció de temperatura a curt termini amb xarxes neuronals LSTM"**
+**"Predicció de temperatura a curt termini utilitzant machine learning"**
 
 El projecte s’ha realitzat dins la línia de **Recerca Aplicada i Modelització (RAM)** del **Servei Meteorològic de Catalunya (SMC)** i el **Màster en Modelització per a la Ciència i l’Enginyeria** de la **Universitat Autònoma de Barcelona (UAB)**.
 
