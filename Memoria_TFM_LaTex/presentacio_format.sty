@@ -1,0 +1,134 @@
+% #########################################################################
+% ##                  FITXER: presentacio_format.sty                     ##
+% ##        Contingut: Format unificat per presentacions beamer         ##
+% #########################################################################
+
+% =====================================
+% === Paquets bàsics i idioma
+% =====================================
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[catalan]{babel}
+\usepackage{csquotes}
+
+% =====================================
+% === Matemàtiques i ciència
+% =====================================
+
+\usepackage{amsmath, amssymb, amsfonts, mathtools}
+\usepackage{physics}
+\usepackage{siunitx}
+\AtBeginDocument{\RenewCommandCopy\qty\SI} % Evita conflicte physics + siunitx
+
+% =====================================
+% === Estil i gràfics
+% =====================================
+
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{bm}
+\usepackage{bbold}
+% \usepackage{adjustbox}
+\usepackage[export]{adjustbox}
+\usepackage{multicol}
+\usepackage{caption}
+\captionsetup{font=footnotesize, labelfont=bf}
+
+\graphicspath{{/figures/}}
+
+% =====================================
+% === Bibliografia
+% =====================================
+
+\usepackage[backend=biber, style=phys]{biblatex}
+\addbibresource{../biblio.bib}
+
+% =====================================
+% === Colors corporatius
+% =====================================
+
+\definecolor{applegreen}{rgb}{0.55, 0.71, 0.0}
+\definecolor{verdUAB}{RGB}{0,126,17}
+\definecolor{marroUAB}{RGB}{169,85,33}
+\definecolor{customBlockColor}{RGB}{200,228,250}
+\definecolor{customAlertColor}{RGB}{31,112,173}
+
+% =====================================
+% === Configuració beamer (tema, colors, peu, etc.)
+% =====================================
+
+\usepackage{helvet}
+\usefonttheme{serif} % Equival a mathserif obsolet
+
+\usetheme{Berlin}
+\useoutertheme{infolines}
+\setbeamersize{text margin left=8mm, text margin right=8mm}
+
+% Colors beamer
+\colorlet{primary_color}{verdUAB}
+\colorlet{secondary_color}{applegreen}
+
+\setbeamercolor{alerted text}{fg=red}
+\setbeamercolor{background canvas}{bg=white}
+\setbeamercolor{block body}{bg=primary_color!20}
+\setbeamercolor{block body alerted}{bg=white, fg=red}
+\setbeamercolor{block body example}{fg=primary_color!60!black, bg=gray!30}
+\setbeamercolor{block title}{bg=primary_color, fg=white}
+\setbeamercolor{block title alerted}{fg=white, bg=red}
+\setbeamercolor{block title example}{bg=primary_color!70!black, fg=white}
+\setbeamercolor{frametitle}{fg=white, bg=primary_color}
+\setbeamercolor{item projected}{fg=white}
+\setbeamercolor{normal text}{bg=white, fg=black}
+\setbeamercolor{title}{fg=white}
+\setbeamercolor{title in head/foot}{bg=secondary_color}
+\setbeamercolor{section in head/foot}{bg=secondary_color!80!white}
+\setbeamercolor{subsection in head/foot}{bg=secondary_color!60!black}
+\setbeamercolor{author in head/foot}{bg=secondary_color!80!white}
+\setbeamercolor{institute in head/foot}{bg=secondary_color}
+\setbeamercolor{number in head/foot}{bg=secondary_color!80!black, fg=white}
+\setbeamercolor{structure}{bg=primary_color, fg=primary_color}
+\setbeamercolor{itemize item}{fg=primary_color}
+
+% Peu de pàgina personalitzat
+\setbeamertemplate{footline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.5ex,dp=1ex,right]{author in head/foot}
+      \usebeamerfont{author in head/foot}\insertshortauthor\hspace*{2ex}
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.6\paperwidth,ht=2.5ex,dp=1ex,left]{institute in head/foot}
+      \usebeamerfont{title in head/foot}\hspace*{2ex}\insertshorttitle
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.10\paperwidth,ht=2.5ex,dp=1ex,right]{number in head/foot}
+      \usebeamerfont{author in head/foot}\insertframenumber{} / \inserttotalframenumber\hspace*{1ex}
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+% Capçalera amb seccions
+\setbeamertemplate{headline}{
+  \leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=.4\paperwidth,ht=2.25ex,dp=1ex,right]{title in head/foot}
+       \usebeamerfont{section in head/foot}\insertsectionhead\hspace*{2ex}
+    \end{beamercolorbox}%
+    \begin{beamercolorbox}[wd=.6\paperwidth,ht=2.25ex,dp=1ex,left]{section in head/foot}
+       \usebeamerfont{subsection in head/foot}\hspace*{2ex}\insertsubsectionhead
+    \end{beamercolorbox}}%
+  \vskip0pt%
+}
+
+% Sense símbols de navegació
+\setbeamertemplate{navigation symbols}{}
+
+
+% % Índex automàtic al començar cada secció
+% \AtBeginSection[]{
+%   \frame<beamer>{
+%     \frametitle{Índex}
+%     \tableofcontents[currentsection]
+%   }
+% }

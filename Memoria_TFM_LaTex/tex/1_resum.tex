@@ -1,0 +1,47 @@
+% #########################################################################
+% ##                           FITXER: 1_resum.tex                       ##
+% ##             Contingut: Resum del treball (Abstract en anglès)       ##
+% #########################################################################
+
+%%TC:ignore
+\documentclass[../main.tex]{subfiles}
+
+% ------------------------------------------------------------
+% Paquets específics
+% ------------------------------------------------------------
+\usepackage{paquets_format}
+%\usepackage{almutils}
+
+% ------------------------------------------------------------
+% Inici del document
+% ------------------------------------------------------------
+\begin{document}
+
+% ============================================================
+% CAPÍTOL: Resum - Abstract
+% ============================================================
+
+\chapter*{Resum}\label{ch:resum}
+\addcontentsline{toc}{chapter}{\nameref{ch:resum}}
+
+Short-term temperature forecasting is crucial in meteorology and for services such as the Meteorological Service of Catalonia. Currently, these forecasts rely on numerical models that, while accurate, require high computational costs. This study analyzes the use of  Recurrent Neural Networks (RNN), specifically Long Short-Term Memory (LSTM) architectures, to determine whether they can provide accurate hourly temperature forecasts with lower computational requirements.
+
+To contextualize their performance, LSTM models are compared with classical ARIMA and SARIMA models, which have been widely used in time series modelling  but may not be optimal with capturing complex short-term nonlinear patterns. In addition, a categorical Markov Chain model is used for qualitative comparison in a precipitation forecasting scenario. The analysis are conducted using real data from Meteocat's automatic weather station, aiming to assess both model accuracy and computational feasibility.
+
+The results show that statistical models provide competitive performance in very short horizons, while LSTM models offer potential advantages in more challenging setups, particularly when using recursive prediction strategies. This work lays the groundwork for future research directions, including the integration of additional input features and the exploration of alternative neural architectures to build more robust forecasting systems.
+
+\vspace{1cm}
+\noindent\hrulefill
+\vspace{1cm}
+
+La predicció de temperatura a curt termini és crucial en meteorologia i per a serveis com el Servei Meteorològic de Catalunya. Actualment, aquestes prediccions es basen en models numèrics que, tot i ser precisos, requereixen costos computacionals elevats. Aquest estudi analitza l'ús de Xarxes Neuronals Recurrents (RNN), concretament arquitectures de Memòria a Curt Termini Llarg (LSTM), per determinar si poden proporcionar prediccions de temperatura horàries precises amb requisits computacionals més baixos.
+
+Per contextualitzar el seu rendiment, els models LSTM es comparen amb els models clàssics ARIMA i SARIMA, que s'han utilitzat àmpliament en la modelització de sèries temporals però que poden no ser òptims per capturar patrons no lineals complexos a curt termini. A més, s'utilitza un model de Cadena de Markov categòrica per a la comparació qualitativa en un escenari de predicció de precipitacions. L'anàlisi es duu a terme utilitzant dades reals de l'estació meteorològica automàtica de Meteocat, amb l'objectiu d'avaluar tant la precisió del model com la viabilitat computacional.
+
+Els resultats mostren que els models estadístics proporcionen un rendiment competitiu en horitzons molt curts, mentre que els models LSTM ofereixen avantatges potencials en configuracions més desafiadores, especialment quan s'utilitzen estratègies de predicció recursiva. Aquest treball estableix les bases per a futures línies de recerca, incloent-hi la integració de funcions d'entrada addicionals i l'exploració d'arquitectures neuronals alternatives per construir sistemes de predicció més robustos.
+
+% ------------------------------------------------------------
+% Fi del document
+% ------------------------------------------------------------
+\end{document}
+%%TC:endignore

@@ -1,0 +1,49 @@
+% #########################################################################
+% ##                        FITXER: 9_conclusions.tex                    ##
+% ##                   Contingut: Capítol de conclusions                 ##
+% #########################################################################
+
+\documentclass[../main.tex]{subfiles}
+
+% ------------------------------------------------------------
+% Paquets específics
+% ------------------------------------------------------------
+\usepackage{paquets_format}
+%\usepackage{almutils}
+
+% ------------------------------------------------------------
+% Inici del document
+% ------------------------------------------------------------
+\begin{document}
+
+% ============================================================
+% CAPÍTOL: Conclusions
+% ============================================================
+
+\chapter{Resum, conclusions i treball futur} \label{ch:conclusions}
+
+Aquest treball ha explorat la viabilitat de diferents models per a la predicció horària de la temperatura a molt curt termini, utilitzant dades reals de l’estació de la Bonaigua. S’han implementat i comparat tres enfocaments representatius: les cadenes de Markov, per a una predicció categòrica de base probabilística; els models estadístics ARIMA/SARIMA, com a referència clàssica per a sèries temporals contínues, i les xarxes neuronals LSTM, com a alternativa basada en \textit{deep learning}. De la seva aplicació se n’han extret diverses conclusions.
+
+En primer lloc, les cadenes de Markov, tot i la seva simplicitat, han estat capaces de capturar els patrons dominants dels estats de precipitació en escenaris hivernals. No obstant això, presenten una capacitat predictiva limitada per a transicions fines, i no són aplicables directament a variables contínues com la temperatura, tot i que poden resultar útils com a aproximació per al càlcul d’estats meteorològics d’interès.
+
+Els models ARIMA i SARIMA han ofert una base sòlida per a la predicció a curt termini, amb resultats competitius i un cost computacional moderat. En particular, els models SARIMA han demostrat capacitat per capturar l’estacionalitat diürna amb configuracions relativament senzilles, sense necessitat d’elevada complexitat.
+
+Per altra banda els models LSTM, tot i aportar bons resultats, no han assolit l’avantatge esperat respecte als models estadístics que planteja la bibliografia. Això suggereix que, en problemes de predicció horària a molt curt termini, la dinàmica de la sèrie pot ser més difícil de capturar del que es podria pensar inicialment. Les dades són molt contínues, i és fàcil que els errors es propaguin i s’acumulin ràpidament, desviant les prediccions. Malgrat això, s’ha observat que arquitectures més senzilles, com les xarxes d’una sola capa, poden ser tan eficients com estructures més profundes, fet que posa en relleu la dificultat de calibrar l’equilibri entre simplicitat i robustesa, evitant tant el sobre ajustament com l’esbiaix.
+
+Tanmateix, és possible que en estacions amb una dinàmica més no lineal, com poden ser les de fons de vall o amb forts contrastos tèrmics, els models LSTM puguin mostrar un rendiment superior respecte als estadístics. L’anàlisi d’aquests entorns més complexos constitueix una línia de treball futura molt interessant.
+
+Un aspecte important a considerar és que, tot i que valors de RMSE al voltant d’1~\si{\celsius} podrien considerar-se molt bons en contextos de predicció diària, en el cas d’aquest estudi, centrat en la predicció horària a molt curt termini, aquests resultats són relativament modestos. Donada la proximitat temporal entre observació i predicció, s’esperaria que els models fossin capaços d’assolir errors més baixos.
+
+Aquest projecte s'ha centrat en la base d’un sistema de predicció horària de temperatura mitjançant tècniques d’aprenentatge automàtic, però obre la porta a múltiples línies de millora i ampliació. Una primera direcció clara seria la incorporació de noves variables predictives a l'entrenament dels models LSTM, com la codificació del dia de l’any, l’hora del dia o altres variables meteorològiques, que permetrien a la xarxa disposar de més context per fer una predicció acurada.
+
+A més a més, també seria interessant explorar altres models com Prophet, àmpliament utilitzat en contextos de sèries temporals, o bé provar arquitectures alternatives basades en LSTM. Algunes opcions serien entrenar models específics per a diferents horitzons temporals i combinar-ne les prediccions, o bé desenvolupar models especialitzats per a mesos o estacions concretes de l’any, amb l’objectiu de capturar millor les variacions estacionals.
+
+Paral·lelament, una millora clara seria l’automatització del procés de selecció d’hiperparàmetres, mitjançant tècniques de cerca eficient com la validació creuada o la cerca bayesiana, amb l’objectiu de trobar la combinació òptima per maximitzar el rendiment i evitar el sobre-ajustament.
+
+Finalment, una línia especialment prometedora seria l’exploració de models més avançats com les \textit{Neural Ordinary Differential Equations} (Neural ODEs), que permetrien modelitzar de manera més explícita la dinàmica contínua del sistema. Tot i no haver-se implementat en aquest estudi, la seva aplicació podria obrir nous camins per representar millor l’evolució temporal de variables meteorològiques i millorar la interpretabilitat dels models neuronals en contextos físics, constituint un possible pont entre els models basats en dades i els models meteorològics tradicionals.
+
+
+% ------------------------------------------------------------
+% Fi del document
+% ------------------------------------------------------------
+\end{document}

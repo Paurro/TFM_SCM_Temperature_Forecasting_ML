@@ -1,0 +1,194 @@
+% #########################################################################
+% ##                     FITXER: paquets_format.sty                      ##
+% ##        Contingut: Càrrega de paquets i configuració d'estils        ##
+% #########################################################################
+
+% =====================================
+% === Configuració bàsica del document
+% =====================================
+
+\usepackage[utf8]{inputenc}          % Codificació d'entrada
+\usepackage[T1]{fontenc}             % Codificació de font
+\usepackage[catalan]{babel}          % Llengua del document CATALÀ
+% \usepackage[english]{babel}        % Llengua del Document ENGLISH
+
+% =====================================
+% === Paquets de bibliografia
+% =====================================
+
+\usepackage[backend=biber, style=apa, sorting=nyt, hyperref=true, backref=true]{biblatex}
+\addbibresource{bibliografia.bib}
+\setlength\bibitemsep{1\baselineskip}
+\DefineBibliographyStrings{catalan}{ bibliography = {Referències}}
+
+% =====================================
+% === Paquets visuals i d'estil
+% =====================================
+
+\usepackage{graphicx}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{fancyhdr}
+\usepackage{emptypage}
+\usepackage{titlesec}
+\usepackage{titling}
+\usepackage[a4paper, left=30mm, right=30mm, top=25mm, bottom=30mm]{geometry}
+\usepackage{parskip}
+\usepackage{indentfirst}
+\usepackage{microtype}
+\usepackage[colorlinks=true,linkcolor=black, citecolor=blue, urlcolor=blue, hyperfootnotes=true]{hyperref}
+\usepackage{float}
+
+% =====================================
+% === Paquets per estructurar
+% =====================================
+
+\usepackage{tocbibind}
+\usepackage{subfiles}
+\usepackage{epigraph}
+
+% =====================================
+% === Paquets per matemàtiques
+% =====================================
+
+\usepackage{amsmath, amssymb, amsfonts, mathtools, mathrsfs}
+\usepackage{physics}
+\usepackage{siunitx}
+\usepackage{cancel}
+\usepackage{bbold}
+\usepackage{bm}
+\usepackage{dsfont}
+
+% =====================================
+% === Glosari i acrònims
+% =====================================
+
+\usepackage[acronym]{glossaries}
+
+% Glosaris separats
+\newglossary[ari]{arima}{ari}{nari}{Paràmetres ARIMA i SARIMA}
+\newglossary[lst]{lstm}{lst}{nlst}{Paràmetres i símbols LSTM}
+\newglossary[mkv]{markov}{mkv}{nmk}{Variables de Markov}
+
+\makeglossaries
+\input{tex/11_glossari.tex}
+
+% Recorda:
+% - Afegir \makeglossaries al preàmbul
+% - Usar \gls{...} per acrònims i \printglossary per mostrar-los
+
+% =====================================
+% === Hiperenllaços i referències
+% =====================================
+
+\usepackage[capitalise,nameinlink,noabbrev]{cleveref}
+\usepackage{etoolbox}
+
+% =====================================
+% === Altres utilitats
+% =====================================
+
+\usepackage{lipsum}
+\usepackage{enumerate}
+\usepackage{csquotes}
+\usepackage{footmisc}
+
+% =====================================
+% === Estil de capítols i figures
+% =====================================
+
+\setlength{\belowcaptionskip}{0pt}
+\numberwithin{figure}{chapter}
+\numberwithin{equation}{chapter}
+\numberwithin{table}{chapter}
+\captionsetup{
+  font=small,           % Més petita que el text normal
+  labelfont=bf,         % Opcional: posa el “Figura 1” en negreta
+  textfont=it           % Cursiva per al text de la caption
+}
+
+
+% ============================
+% === Format de capítols, seccions i subapartats ===
+% ============================
+
+% Capítols
+\titleformat{\chapter}[hang]{\huge\bfseries}{\thechapter.}{1em}{}
+\titlespacing*{\chapter}{0pt}{30pt}{20pt} % Espai abans/després del capítol
+
+% Seccions
+\titleformat{\section}[hang]{\Large\bfseries}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{18pt}{12pt} % Espai abans/després de seccions
+
+% Subapartats
+\titleformat{\subsection}[hang]{\large\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{14pt}{10pt} % Espai abans/després de subapartats
+
+% =====================================
+% === Macros personalitzades
+% =====================================
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{definition}{Definition}
+\def\arraystretch{1.2}
+
+% Comandes pròpies
+\newcommand{\expect}{\mathds{E}}
+\newcommand{\prob}[1]{\mathds{P}\insqr{#1}}
+\newcommand{\vecs}[2][n]{#2_1,\dots,#2_{#1}}
+\newcommand{\scprod}[2]{\langle #1, #2 \rangle}
+\renewcommand{\vec}[1]{\bm{#1}}
+
+% Epígraf configurat per cites literàries
+\setlength{\epigraphwidth}{0.9\linewidth}
+\setlength{\epigraphrule}{0pt}
+\newcommand{\say}[3]{\epigraph{#1}{--- #2, \textit{#3}}}
+
+
+% =====================================
+% === Traduccions visuals al català
+% =====================================
+
+% Traducció automàtica de noms amb babel (per captions i seccions)
+\addto\captionscatalan{
+  \renewcommand{\figurename}{Figura}
+  \renewcommand{\tablename}{Taula}
+  \renewcommand{\listfigurename}{Llista de figures}
+  \renewcommand{\listtablename}{Llista de taules}
+  \renewcommand{\chaptername}{Capítol}
+  \renewcommand{\contentsname}{Índex general}
+  \renewcommand{\bibname}{Bibliografia}
+  \renewcommand{\appendixname}{Annex}
+}
+
+% =====================================
+% === Traduccions per cleveref segons idioma
+% =====================================
+
+
+\iflanguage{catalan}{
+% --- Noms per entorns específics en català
+    \crefname{table}{taula}{taules}
+    \Crefname{table}{Taula}{Taules}
+    \crefname{section}{secció}{seccions}
+    \Crefname{section}{Secció}{Seccions}
+    \crefname{chapter}{capítol}{capítols}
+    \Crefname{chapter}{Capítol}{Capítols}
+  }
+
+\iflanguage{english}{
+    % --- Noms per entorns específics en anglès
+    \crefname{table}{table}{tables}
+    \Crefname{table}{Table}{Tables}
+    \crefname{section}{section}{sections}
+    \Crefname{section}{Section}{Sections}
+    \crefname{chapter}{chapter}{chapters}
+    \Crefname{chapter}{Chapter}{Chapters}
+  }
+
+  % --- Noms comuns, aplicables a qualsevol idioma
+  \crefname{figure}{fig.}{figs.}
+  \Crefname{figure}{Fig.}{Figs.}
+  \crefname{equation}{eq.}{eqs.}
+  \Crefname{equation}{Eq.}{Eqs.}

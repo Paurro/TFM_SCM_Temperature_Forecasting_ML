@@ -1,0 +1,52 @@
+% #########################################################################
+% ##                        FITXER: 3_introduccció.tex                   ##
+% ##                  Contingut: Capítol d'introducció                   ##
+% #########################################################################
+
+\documentclass[../main.tex]{subfiles}
+
+% ------------------------------------------------------------
+% Paquets específics
+% ------------------------------------------------------------
+\usepackage{paquets_format}
+%\usepackage{almutils}
+
+% ------------------------------------------------------------
+% Inici del document
+% ------------------------------------------------------------
+\begin{document}
+
+% ============================================================
+% CAPÍTOL: Introduction
+% ============================================================
+
+\chapter{Introducció} \label{ch:intro}
+
+La predicció de la temperatura a curt termini és una tasca clau dins del camp de la meteorologia operativa, amb aplicacions que van des de la gestió del risc meteorològic fins a l’optimització de serveis logístics i energètics. Actualment, aquestes prediccions es basen principalment en models numèrics d’alta resolució com el WRF (\textit{Weather Research and Forecasting model}), que ofereixen bons resultats però tenen un cost computacional elevat.
+
+Aquesta necessitat obre la porta a explorar mètodes alternatius, menys costosos computacionalment, que puguin oferir prediccions raonablement precises amb menys recursos i temps. En aquest context, els models basats en tècniques d’aprenentatge automàtic (\textit{machine learning}), com les arquitectures  \textit{Long Short-Term Memory} (LSTM), basades en xarxes neuronals recurrents (RNN), s'han popularitzat en els darrers anys per la  seva capacitat d’adaptar-se a patrons complexos i no lineals de les sèries temporals, com els de l'evolució horària de la temperatura.
+
+El projecte s’emmarca dins la línia de Recerca Aplicada i Modelització (RAM) del \gls{smc}, i té com a objectiu analitzar la viabilitat d’utilitzar models de \textit{machine learning} per a la predicció horària de la temperatura a molt curt termini. L’estudi es presenta com un primer pas cap al desenvolupament de mètodes propis, eficients i adaptats a les necessitats específiques del SMC, orientats a la previsió a curt termini de variables meteorològiques com la temperatura o el vent.
+
+L'estudi planteja una comparació entre tres enfocaments diferents: les cadenes de Markov (com a model categòric de base probabilística), els models estadístics ARIMA i SARIMA (com a referència clàssica per a sèries temporals) i les xarxes LSTM (com a model d’aprenentatge profund). Aquesta comparació es fa sobre dades reals horàries de temperatura de l’estació de la Bonaigua, en el perióde 1998–2024, amb especial atenció al comportament a curt termini i a la capacitat de cada model per superar el model de persistència, sovint emprat com a línia base simple però sorprenentment efectiva.
+
+Tots els models s’han implementat amb llenguatge Python, utilitzant biblioteques especialitzades com \texttt{statsmodels} per als models ARIMA i \texttt{TensorFlow} per a les xarxes neuronals. A més, s’ha desenvolupat un flux de treball \textit{pipeline} modular propi, que permet repetir els experiments de manera eficient i traçable. El codi complet d’aquest projecte està disponible públicament al repositori: \href{https://github.com/Paurro/TFM_SCM_Temperature_Forecasting_ML}{\texttt{github.com/Paurro/TFM\_SCM\_Temperature\_Forecasting\_ML}}.
+
+Així doncs s'han plantejat com a objectius:
+
+\begin{itemize}
+    \item Establir una línia base sòlida per a la predicció de temperatura a curt termini, a partir de dades horàries d’una estació de muntanya.
+
+    \item Avaluar el comportament de diferents metodologies (Markov, ARIMA, LSTM) en termes de precisió i eficiència computacional.
+
+    \item Analitzar la influència de diversos paràmetres estructurals i d’entrenament en el rendiment dels models LSTM.
+
+    \item Explorar la viabilitat d’integrar models de \textit{machine learning} dins els processos operatius del SMC.
+\end{itemize}
+
+Els capítols següents presenten el detall del tractament de dades, la formulació teòrica i pràctica dels diferents models, així com els resultats obtinguts i les conclusions extretes.
+
+% ------------------------------------------------------------
+% Fi del document
+% ------------------------------------------------------------
+\end{document}

@@ -1,0 +1,185 @@
+% #########################################################################
+% ##                       FITXER: 11_glossari_entries.tex                ##
+% ##         Contingut: Definicions de glossari i acrònims per \gls      ##
+% #########################################################################
+
+% % Categories de glossaris
+% \newglossary[markov]{markov}{mkv}{nmk}{Variables de Markov}
+% \newglossary[arima]{arima}{ari}{nari}{Paràmetres ARIMA i SARIMA}
+% \newglossary[lstm]{lstm}{lst}{nlst}{Paràmetres i símbols LSTM}
+
+% ------------------------------------------------------------
+% ACRÒNIMS
+% ------------------------------------------------------------
+
+\newacronym{uab}{UAB}{Universitat Autònoma de Barcelona}
+\newacronym{smc}{SMC}{Servei Meteorològic de Catalunya}
+\newacronym{xema}{XEMA}{Xarxa d'Estacions Meteorològiques Automàtiques}
+\newacronym{ml}{ML}{Aprenentatge automàtic (Machine Learning)}
+\newacronym{arima}{ARIMA}{Model autoregressiu integrat de mitjana mòbil}
+\newacronym{sarima}{SARIMA}{Seasonal ARIMA}
+\newacronym{lstm}{LSTM}{Long-Short Term Memory}
+\newacronym{rnn}{RNN}{Recurrent Neural Network}
+\newacronym{rmse}{RMSE}{Root Mean Squared Error}
+\newacronym{mse}{MSE}{Mean Squared Error}
+\newacronym{mae}{MAE}{Mean Absolute Error}
+
+% ------------------------------------------------------------
+% VARIABLES I SÍMBOLS
+% ------------------------------------------------------------
+
+% MARKOV
+
+\newglossaryentry{pij}{
+  name = $P_{ij}$,
+  description = {Probabilitat de transició de l’estat $i$ a $j$ en un model de Markov}
+}
+
+% ARIMA
+
+\newglossaryentry{yt}{
+    name={\ensuremath{y_t}},
+    description={Valor observat de la sèrie temporal en el temps \ensuremath{t}.}
+}
+
+\newglossaryentry{c}{
+    name={\ensuremath{c}},
+    description={Constant o terme independent del model.}
+}
+
+\newglossaryentry{phi}{
+    name={\ensuremath{\phi_i}},
+    description={Coeficients del component autoregressiu (AR), que ponderen la influència dels valors passats \ensuremath{y_{t-i}}.}
+}
+
+\newglossaryentry{theta}{
+    name={\ensuremath{\theta_j}},
+    description={Coeficients del component de mitjana mòbil (MA), que ponderen els errors passats \ensuremath{\varepsilon_{t-j}}.}
+}
+
+\newglossaryentry{eps}{
+    name={\ensuremath{\varepsilon_t}},
+    description={Soroll blanc: error aleatori amb mitjana zero i no correlacionat.}
+}
+
+\newglossaryentry{epsj}{
+    name={\ensuremath{\varepsilon_{t-j}}},
+    description={Error de predicció comès en l’instant \ensuremath{t-j}, és a dir, la diferència entre el valor observat i el predit.}
+}
+
+\newglossaryentry{B}{
+    name={\ensuremath{B}},
+    description={Operador de retard (\textit{backshift}): \ensuremath{B y_t = y_{t-1}}. Permet expressar diferències i components estacionals.}
+}
+
+\newglossaryentry{phipB}{
+    name={\ensuremath{\phi_p(B)}},
+    description={Polinomi que representa el component AR no estacional d’ordre \ensuremath{p}, en funció de l’operador \ensuremath{B}.}
+}
+
+\newglossaryentry{thetaqB}{
+    name={\ensuremath{\theta_q(B)}},
+    description={Polinomi del component MA no estacional d’ordre \ensuremath{q}, en funció de \ensuremath{B}.}
+}
+
+\newglossaryentry{PhiPB}{
+    name={\ensuremath{\Phi_P(B^s)}},
+    description={Polinomi del component AR estacional, d’ordre \ensuremath{P} i període \ensuremath{s}.}
+}
+
+\newglossaryentry{ThetaQB}{
+    name={\ensuremath{\Theta_Q(B^s)}},
+    description={Polinomi del component MA estacional, d’ordre \ensuremath{Q} i període \ensuremath{s}.}
+}
+
+\newglossaryentry{d}{
+    name={\ensuremath{d}},
+    description={Nombre de diferenciacions no estacionals aplicades a la sèrie.}
+}
+
+\newglossaryentry{D}{
+    name={\ensuremath{D}},
+    description={Nombre de diferenciacions estacionals aplicades a la sèrie.}
+}
+
+\newglossaryentry{s}{
+    name={\ensuremath{s}},
+    description={Període d’estacionalitat (p. ex., \ensuremath{s=24} per cicles diürns en dades horàries).}
+}
+
+
+
+% LSTM
+
+\newglossaryentry{xt}{
+    name={$x_t$},
+    description={Entrada de la cèl·lula en el pas temporal $t$}
+}
+
+\newglossaryentry{htm1}{
+    name={$h_{t-1}$},
+    description={Sortida (estat ocult) de la cèl·lula en el pas anterior}
+}
+
+\newglossaryentry{ctm1}{
+    name={$C_{t-1}$},
+    description={Estat intern (memòria) de la cèl·lula en el pas anterior}
+}
+
+\newglossaryentry{ct}{
+    name={$C_t$},
+    description={Estat intern (memòria) actualitzat en el pas $t$}
+}
+
+\newglossaryentry{ht}{
+    name={$h_t$},
+    description={Sortida de la cèl·lula en el pas actual}
+}
+
+\newglossaryentry{ft}{
+    name={$f_t$},
+    description={Porta d’oblit: controla quina part de la memòria anterior es descarta}
+}
+
+\newglossaryentry{it}{
+    name={$i_t$},
+    description={Porta d’entrada: regula quina nova informació s’incorpora}
+}
+
+\newglossaryentry{ot}{
+    name={$o_t$},
+    description={Porta de sortida: determina quina part de la memòria es propaga com a sortida}
+}
+
+\newglossaryentry{ctilda}{
+    name={$\tilde{C}_t$},
+    description={Cèl·lula candidata: nova informació proposada per ser incorporada a la memòria}
+}
+
+\newglossaryentry{wstar}{
+    name={$W_*$},
+    description={Matriu de pesos aplicada a l’entrada $x_t$ per a cada porta ($* = f, i, o, c$)}
+}
+
+\newglossaryentry{ustar}{
+    name={$U_*$},
+    description={Matriu de pesos aplicada a l’estat ocult $h_{t-1}$ per a cada porta}
+}
+
+\newglossaryentry{bstar}{
+    name={$b_*$},
+    description={Termes de biaix de cada porta}
+}
+
+\newglossaryentry{sigmoid}{
+    name={$\sigma(\cdot)$},
+    description={Funció sigmoide, amb sortida a l’interval $[0, 1]$}
+}
+
+\newglossaryentry{tanh}{
+    name={$\tanh(\cdot)$},
+    description={Funció tangenta hiperbòlica, amb sortida a l’interval $[-1, 1]$}
+}
+
+
+

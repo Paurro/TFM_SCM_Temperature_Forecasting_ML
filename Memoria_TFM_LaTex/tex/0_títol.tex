@@ -1,0 +1,74 @@
+% #########################################################################
+% ##                           FITXER: 0_títol.tex                       ##
+% ##                     Contingut: Pàgina de portada                    ##
+% #########################################################################
+
+\documentclass[../main.tex]{subfiles}
+
+% ------------------------------------------------------------
+% Paquets addicionals específics per aquest fitxer
+% ------------------------------------------------------------
+\usepackage{paquets_format}
+%\usepackage{almutils}
+
+% ------------------------------------------------------------
+% Inici del document
+% ------------------------------------------------------------
+\begin{document}
+
+% ============================================================
+% PÀGINA DE PORTADA
+% ============================================================
+
+\begin{titlepage}
+    \centering
+    \vspace*{2cm}
+
+    % Títol del màster i TFM
+    {\Huge \bfseries Treball Final de Màster\par}
+    \vspace{0.5cm}
+    {\LARGE Màster en modelització per la Ciència i Enginyeria\par}
+
+    \vfill
+
+    % Títol del treball i autor
+    \noindent\rule{\textwidth}{1pt}\par
+    \vspace{0.5cm}
+    % {\Huge \bfseries Short Term Temperature Forecasting Using Machine Learning\par}
+      {\Huge \bfseries Predicció de temperatura a curt termini utilitzant \textit{machine learning} \par}
+    \vspace{0.5cm}
+    {\LARGE \textbf{Pau Rodrigo Parés}\par}
+    \vspace{0.5cm}
+    \noindent\rule{\textwidth}{1pt}\par
+
+    \vspace{1.5cm}
+
+    % Logos institucionals
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/logos/logo-uab.png}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.45\textwidth}
+        \centering
+        \includegraphics[width=0.9\linewidth]{figures/logos/meteocat_c.png}
+    \end{minipage}
+
+    \vfill
+
+    % Supervisors
+    {\large Tutors\par}
+    {\large \textbf{Sílvia Cuadrado (UAB) \\ Josep Ramon Miró (SMC)}\par}
+
+    \vspace{1cm}
+
+    % Informació addicional
+    {\large Convocatòria: \textbf{Juny 2025}\par}
+    {\large Universitat Autònoma de Barcelona}
+
+\end{titlepage}
+
+% ------------------------------------------------------------
+% Fi del document
+% ------------------------------------------------------------
+\end{document}

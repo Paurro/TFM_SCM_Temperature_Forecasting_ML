@@ -1,0 +1,115 @@
+% #########################################################################
+% ##                            FITXER: main.tex                         ##
+% ##           Contingut: Arxiu principal del TFM (estructura)           ##
+% #########################################################################
+
+
+\documentclass[oneside]{report}
+
+
+% ------------------------------------------------------------
+% Paquet central personalitzat
+% ------------------------------------------------------------
+\usepackage{paquets_format}
+%\usepackage{almutils}
+
+% ------------------------------------------------------------
+% Cos del document
+% ------------------------------------------------------------
+\begin{document}
+
+% ============================================================
+% PORTADA
+% ============================================================
+
+\pagestyle{empty}
+\subfile{tex/0_títol.tex}
+\clearpage\null\newpage
+
+% ============================================================
+% PRIMERES SECCIONS (sense numeració àrab)
+% ============================================================
+
+% Capçalera i numeració
+\pagestyle{plain}
+\pagenumbering{roman}
+
+% Resum
+\subfile{tex/1_resum.tex}
+\clearpage
+
+% % Agraïments
+% \subfile{tex/2_agraïments.tex}
+% \clearpage\
+
+% Glossari 
+% \glsaddall[acronym] % Força que es mostrin tots els acronims
+\glsaddall % Força que es mostrin tots els Simbols
+
+\printglossary[type=\acronymtype, title=Acrònims, nonumberlist]
+\printglossary[type=main, title=Glossari de símbols i termes, nonumberlist]
+% \printglossary[type=markov, title=Variables de Markov, nonumberlist]
+% \printglossary[type=arima, title=Paràmetres ARIMA i SARIMA, nonumberlist]
+% \printglossary[type=lstm, title=Paràmetres i símbols LSTM, nonumberlist]
+\clearpage
+
+% Índex
+\tableofcontents
+\clearpage
+
+% ============================================================
+% COS PRINCIPAL DEL TREBALL
+% ============================================================
+
+% Capçalera i numeració
+\pagestyle{plain}
+%\pagestyle{fancy}
+\pagenumbering{arabic}
+
+% Introducció i context
+\subfile{tex/3_introducció.tex}
+
+% Dades utilitzades
+\subfile{tex/4_dades.tex}
+
+% Model de Markov
+\subfile{tex/5_markov.tex}
+
+% ModelsARIMA
+\subfile{tex/6_arima.tex}
+
+% Models LSTM
+\subfile{tex/7_lstm.tex}
+
+% Resultats i comparacions
+\subfile{tex/8_resultats.tex}
+
+% Conclusions
+\subfile{tex/9_conclusions.tex}
+
+% ============================================================
+% BIBLIOGRAFIA
+% ============================================================
+
+%\nocite{*}
+% \printbibliography[heading=bibnumbered]
+
+\cleardoublepage
+\phantomsection
+\addcontentsline{toc}{chapter}{Referències} % O "Bibliografia" si ho prefereixes
+\printbibliography
+
+
+% ============================================================
+% ANNEXOS
+% ============================================================
+
+% % Capçalera 
+% \pagestyle{plain}
+% %\pagestyle{fancy}
+% \subfile{tex/10_annexos.tex}
+
+% ------------------------------------------------------------
+% Fi del document
+% ------------------------------------------------------------
+\end{document}

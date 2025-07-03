@@ -1,0 +1,7 @@
+# Normalitza els finals de línia per fitxers LaTeX
+*.tex text eol=lf
+*.bib text eol=lf
+*.sty text eol=lf
+*.cls text eol=lf
+*.md text eol=lf
+*.sh text eol=lf
